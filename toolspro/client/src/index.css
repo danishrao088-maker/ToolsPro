@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* Agar kabhi "dark:" wali class chahiye ho to wo .dark ke andar kaam karegi */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Wo rang jo light aur dark mein badalte hain */
+:root {
+  --page: #f7f8fc;
+  --surface: #ffffff;
+  --surface-muted: #f1f3fa;
+  --heading: #171b32;
+  --body: #626b82;
+  --muted: #8a92a6;
+  --line: #e6e9f2;
+  --link: #5b35f5;
+  --success: #16865d;
+  --warning: #b7791f;
+  --danger: #c93645;
+  color-scheme: light;
+}
+
+.dark {
+  --page: #0c1124;
+  --surface: #131a35;
+  --surface-muted: #1a2245;
+  --heading: #f1f3ff;
+  --body: #aeb6cf;
+  --muted: #7f88a3;
+  --line: #28315a;
+  --link: #a99bff;
+  --success: #3ecf8e;
+  --warning: #e0a84a;
+  --danger: #ff7a85;
+  color-scheme: dark;
+}
+
+/* Tailwind ko batana: ye classes (bg-page, text-heading...) in variables se banao */
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-heading: var(--heading);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-link: var(--link);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+}
+
+/* Wo rang jo dono themes mein ek jaise rehte hain */
+@theme {
+  --color-primary: #5b35f5;
+  --color-primary-hover: #4725d8;
+  --color-secondary: #3b82f6;
+  --color-hero: #101633;
+  --color-hero-secondary: #171d46;
+  --color-focus: #6b55f7;
+  --font-sans: "Inter Variable", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background-color: var(--page);
+  color: var(--body);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
