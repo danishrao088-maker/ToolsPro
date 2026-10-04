@@ -8,7 +8,7 @@ export const tools: Tool[] = [
     category: "text-tools", auditGroup: "A",
     description: "Convert uppercase text to lowercase instantly.",
     icon: "CaseLower", tags: ["text", "case"], keywords: ["lowercase", "uppercase", "convert case"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "keyword-density-checker", name: "Keyword Density Checker", slug: "keyword-density-checker",
