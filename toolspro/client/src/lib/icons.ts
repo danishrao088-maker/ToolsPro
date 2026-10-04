@@ -1,4 +1,7 @@
 import {
+  Binary,
+  Braces,
+  Cake,
   Calculator,
   CaseLower,
   FileText,
@@ -19,6 +22,9 @@ export const iconMap: Record<string, LucideIcon> = {
   FileText,
   Palette,
   CaseLower,
+  Binary,
+  Braces,
+  Cake,
 };
 
 export const fallbackIcon: LucideIcon = Wrench;
