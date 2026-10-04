@@ -9,8 +9,10 @@ interface FormFieldProps {
   hint?: string;
   multiline?: boolean;
   rows?: number;
-  type?: "text" | "email";
+  type?: "text" | "email" | "url" | "date";
   autoComplete?: string;
+  required?: boolean;
+  placeholder?: string;
 }
 
 const baseClass = "w-full rounded-lg border bg-surface px-3 text-base text-heading placeholder:text-body";
@@ -26,6 +28,8 @@ export function FormField({
   rows = 6,
   type = "text",
   autoComplete,
+  required = true,
+  placeholder,
 }: FormFieldProps) {
   const hintId = `${id}-hint`;
   const errorId = `${id}-error`;
@@ -36,14 +40,16 @@ export function FormField({
     <div>
       <label htmlFor={id} className="mb-1 block text-sm font-medium text-heading">
         {label}
+        {required ? null : <span className="font-normal text-body"> (optional)</span>}
       </label>
       {multiline ? (
         <textarea
           id={id}
           value={value}
           rows={rows}
+          placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}
-          aria-required="true"
+          aria-required={required ? "true" : undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
           className={`${className} resize-y py-3`}
@@ -54,8 +60,9 @@ export function FormField({
           type={type}
           value={value}
           autoComplete={autoComplete}
+          placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}
-          aria-required="true"
+          aria-required={required ? "true" : undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
           className={`${className} h-11`}

@@ -1,18 +1,26 @@
 import {
+  BarChart3,
   Binary,
+  Bot,
   Braces,
   Cake,
   Calculator,
   CaseLower,
+  Code,
+  EyeOff,
   FileText,
   Globe,
   Image as ImageIcon,
+  Map as MapIcon,
+  MessageSquare,
   Palette,
+  Share2,
+  Shuffle,
+  Tags,
   Type,
   Wrench,
   type LucideIcon,
 } from "lucide-react";
-
 
 export const iconMap: Record<string, LucideIcon> = {
   Type,
@@ -25,6 +33,15 @@ export const iconMap: Record<string, LucideIcon> = {
   Binary,
   Braces,
   Cake,
+  Tags,
+  Share2,
+  MessageSquare,
+  Bot,
+  Map: MapIcon,
+  BarChart3,
+  EyeOff,
+  Shuffle,
+  Code,
 };
 
 export const fallbackIcon: LucideIcon = Wrench;

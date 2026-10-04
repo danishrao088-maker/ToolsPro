@@ -7,6 +7,7 @@ interface ToolTextareaProps {
   readOnly?: boolean;
   invalid?: boolean;
   rows?: number;
+  mono?: boolean;
 }
 
 export function ToolTextarea({
@@ -18,6 +19,7 @@ export function ToolTextarea({
   readOnly = false,
   invalid = false,
   rows = 10,
+  mono = false,
 }: ToolTextareaProps) {
   return (
     <div>
@@ -33,9 +35,9 @@ export function ToolTextarea({
         rows={rows}
         aria-invalid={invalid || undefined}
         spellCheck={false}
-        className={`w-full resize-y rounded-lg border bg-surface p-3 text-base text-heading placeholder:text-body ${
-          invalid ? "border-danger" : "border-line"
-        } ${readOnly ? "bg-surface-muted" : ""}`}
+        className={`w-full resize-y rounded-lg border bg-surface p-3 text-heading placeholder:text-body ${
+          mono ? "font-mono text-sm" : "text-base"
+        } ${invalid ? "border-danger" : "border-line"} ${readOnly ? "bg-surface-muted" : ""}`}
       />
     </div>
   );
