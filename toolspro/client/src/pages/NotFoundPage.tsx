@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { Container } from "../components/common/Container";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function NotFoundPage() {
+   usePageMeta("Page not found", "The page you are looking for does not exist.");
   return (
     <Container className="py-20 text-center">
       <p className="text-sm font-semibold text-link">404</p>

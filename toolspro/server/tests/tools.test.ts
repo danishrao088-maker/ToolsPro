@@ -1,6 +1,7 @@
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { app } from "../src/app";
+import { tools } from "../src/data/tools";
 
 describe("GET /api/tools", () => {
   it("returns only active tools", async () => {
@@ -12,7 +13,19 @@ describe("GET /api/tools", () => {
       expect(t.status).toBe("active");
     }
   });
-
+  it("returns only active tools, without internal fields", async () => {
+    const activeSlugs = new Set(tools.filter((t) => t.status === "active").map((t) => t.slug));
+    const res = await request(app).get("/api/tools");
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).toHaveLength(activeSlugs.size);
+    for (const t of res.body.data as Record<string, unknown>[]) {
+      expect(activeSlugs.has(t.slug as string)).toBe(true);
+      expect(t).not.toHaveProperty("status");
+      expect(t).not.toHaveProperty("auditGroup");
+      expect(t).not.toHaveProperty("reviewNote");
+    }
+  });
   it("filters by a valid category", async () => {
     const res = await request(app).get("/api/tools?category=text-tools");
     expect(res.status).toBe(200);
