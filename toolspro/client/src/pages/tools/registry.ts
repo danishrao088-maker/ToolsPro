@@ -229,4 +229,70 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "Your code is processed in your browser and is not sent to our server.",
     ],
   },
+    "hours-calculator": {
+    Workspace: lazy(() => import("./HoursCalculatorTool")),
+    howTo: [
+      "Choose the start time and the end time.",
+      "If you took an unpaid break, enter its length in minutes.",
+      "For an overnight shift, tick \"The shift ends the next day\".",
+      "Read the total in hours and minutes, and as decimal hours.",
+    ],
+    limitations: [
+      "The tool works out one shift at a time. For several days, add the results yourself.",
+      "A shift can be at most 24 hours long.",
+      "Decimal hours are rounded to two places, so 20 minutes shows as 0.33.",
+      "Clock changes for daylight saving time are not taken into account.",
+      "Your times are processed in your browser and are not sent to our server.",
+    ],
+  },
+  "what-is-my-browser": {
+    Workspace: lazy(() => import("./WhatIsMyBrowserTool")),
+    howTo: [
+      "Open this page. Your details appear automatically.",
+      "Read the summary at the top, or scroll for more details.",
+      "Select Copy to copy the full list, for example to send it to someone who is helping you.",
+    ],
+    limitations: [
+      "The details come from what your browser reports about itself. Some browsers hide or change them on purpose.",
+      "Windows 10 and Windows 11 look the same to websites, and Mac versions are not shown for the same reason.",
+      "Some browsers pretend to be others, and some, such as Brave, cannot be told apart from Chrome.",
+      "Websites you visit can usually see this same information. This tool only shows it to you.",
+      "The details stay in your browser and are not sent to our server.",
+    ],
+  },
+  "online-text-editor": {
+    Workspace: lazy(() => import("./OnlineTextEditorTool")),
+    howTo: [
+      "Type or paste your text, or select Open a file to load a text file.",
+      "Check the word and character counts below the editor.",
+      "Select Copy, or Download to save the text as a file.",
+      "Select Clear to start again. Undo brings the text back.",
+    ],
+    limitations: [
+      "Your text is not saved. If you close or refresh the page it is lost, so download anything you want to keep.",
+      "This is a plain text editor. It has no bold, italics or other formatting.",
+      "You can open plain text files up to 1,000,000 bytes, and the editor holds up to 1,000,000 characters.",
+      "Word counts split text at spaces, so they may differ from other programs for some languages.",
+      "Your text is processed in your browser and is not sent to our server.",
+    ],
+  },
+    "citation-generator": {
+    Workspace: lazy(() => import("./CitationGeneratorTool")),
+    howTo: [
+      "Choose a style (APA or MLA) and the type of source: a book, a journal article or a web page.",
+      "Enter the authors, one per line, as Family name, Given name. Then fill in the title and the other details.",
+      "Select Create citation.",
+      "Select Copy citation and paste it into your document. In Word or Google Docs the italics are kept.",
+    ],
+    limitations: [
+      "Only books, journal articles and web pages are supported, in APA 7 and MLA 9 style. Other source types and styles are not available.",
+      "A name written without a comma is treated as an organization. Write people as Family name, Given name, for example Khan, Ali.",
+      "The tool does not change capital letters in your title. APA uses sentence case and MLA uses title case, so type the title the way your style needs it.",
+      "Names with suffixes such as Jr., and more than 20 authors, are not handled.",
+      "Web addresses are shown in full, including https://. Some MLA guides leave that part out, so remove it if your guide asks.",
+      "The tool does not add a hanging indent. Add one in your document if your style requires it.",
+      "Citation rules have many special cases. Always check the result against the official guide your school or publisher requires.",
+      "Your details are processed in your browser and are not sent to our server.",
+    ],
+  },
 };

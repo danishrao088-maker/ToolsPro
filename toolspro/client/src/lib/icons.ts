@@ -6,6 +6,7 @@ import {
   Cake,
   Calculator,
   CaseLower,
+  Clock,
   Code,
   EyeOff,
   FileText,
@@ -13,7 +14,10 @@ import {
   Image as ImageIcon,
   Map as MapIcon,
   MessageSquare,
+  Monitor,
   Palette,
+  PenLine,
+  Quote,
   Share2,
   Shuffle,
   Tags,
@@ -22,6 +26,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+// Naye tool ko active karte waqt uska icon yahan jorna hai.
 export const iconMap: Record<string, LucideIcon> = {
   Type,
   Calculator,
@@ -42,6 +47,10 @@ export const iconMap: Record<string, LucideIcon> = {
   EyeOff,
   Shuffle,
   Code,
+  Clock,
+  Monitor,
+  PenLine,
+  Quote
 };
 
 export const fallbackIcon: LucideIcon = Wrench;

@@ -8,6 +8,8 @@ interface ToolTextareaProps {
   invalid?: boolean;
   rows?: number;
   mono?: boolean;
+  spellCheck?: boolean;
+  dir?: "auto" | "ltr" | "rtl";
 }
 
 export function ToolTextarea({
@@ -20,6 +22,8 @@ export function ToolTextarea({
   invalid = false,
   rows = 10,
   mono = false,
+  spellCheck = false,
+  dir,
 }: ToolTextareaProps) {
   return (
     <div>
@@ -33,8 +37,9 @@ export function ToolTextarea({
         readOnly={readOnly}
         placeholder={placeholder}
         rows={rows}
+        dir={dir}
         aria-invalid={invalid || undefined}
-        spellCheck={false}
+        spellCheck={spellCheck}
         className={`w-full resize-y rounded-lg border bg-surface p-3 text-heading placeholder:text-body ${
           mono ? "font-mono text-sm" : "text-base"
         } ${invalid ? "border-danger" : "border-line"} ${readOnly ? "bg-surface-muted" : ""}`}

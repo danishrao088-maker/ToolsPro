@@ -1,10 +1,10 @@
 import { useState } from "react";
-import type { TransformResult } from "../lib/tools/types";
 
-// Form ki values, "Generate" ka nateeja, aur Reset. `initial` module level ka mustaqil object hona chahiye.
-export function useGenerator<T extends object>(initial: T, generate: (values: T) => TransformResult) {
+// Form ki values, "Generate" ka nateeja (kisi bhi qisam ka R), aur Reset.
+// `initial` module level ka mustaqil object hona chahiye.
+export function useGenerator<T extends object, R>(initial: T, generate: (values: T) => R) {
   const [values, setValues] = useState<T>(initial);
-  const [generated, setGenerated] = useState<{ source: T; result: TransformResult } | null>(null);
+  const [generated, setGenerated] = useState<{ source: T; result: R } | null>(null);
 
   const setField =
     <K extends keyof T>(key: K) =>
@@ -20,7 +20,7 @@ export function useGenerator<T extends object>(initial: T, generate: (values: T)
   };
 
   // Nateeja sirf tab dikhta hai jab form wohi ho jis se bana tha. Koi field badla to purana nateeja khud hat jata hai.
-  const result = generated && generated.source === values ? generated.result : null;
+  const result: R | null = generated && generated.source === values ? generated.result : null;
 
   return { values, setField, run, reset, result };
 }

@@ -9,7 +9,7 @@ interface FormFieldProps {
   hint?: string;
   multiline?: boolean;
   rows?: number;
-  type?: "text" | "email" | "url" | "date";
+   type?: "text" | "email" | "url" | "date" | "time";
   autoComplete?: string;
   required?: boolean;
   placeholder?: string;

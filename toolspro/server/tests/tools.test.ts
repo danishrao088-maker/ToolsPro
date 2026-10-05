@@ -3,15 +3,18 @@ import { describe, expect, it } from "vitest";
 import { app } from "../src/app";
 import { tools } from "../src/data/tools";
 
+
 describe("GET /api/tools", () => {
   it("returns only active tools", async () => {
     const res = await request(app).get("/api/tools");
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(Array.isArray(res.body.data)).toBe(true);
-    for (const t of res.body.data as { status: string }[]) {
-      expect(t.status).toBe("active");
-    }
+    // Public list mein wohi tools hon jo registry mein active hain, na kam na zyada
+    const slugs = (res.body.data as { slug: string }[]).map((t) => t.slug).sort();
+    const expected = tools.filter((t) => t.status === "active").map((t) => t.slug).sort();
+    expect(slugs).toEqual(expected);
+    expect(slugs).toHaveLength(19);
   });
   it("returns only active tools, without internal fields", async () => {
     const activeSlugs = new Set(tools.filter((t) => t.status === "active").map((t) => t.slug));
