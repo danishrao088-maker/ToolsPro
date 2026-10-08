@@ -23,6 +23,8 @@ import {
   Tags,
   Type,
   Wrench,
+  Minimize2,
+  RefreshCw,
   type LucideIcon,
 } from "lucide-react";
 
@@ -50,7 +52,10 @@ export const iconMap: Record<string, LucideIcon> = {
   Clock,
   Monitor,
   PenLine,
-  Quote
+  Quote,
+  Wrench,
+  Minimize2,
+  RefreshCw,
 };
 
 export const fallbackIcon: LucideIcon = Wrench;

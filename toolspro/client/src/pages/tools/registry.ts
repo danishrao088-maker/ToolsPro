@@ -295,4 +295,86 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "Your details are processed in your browser and are not sent to our server.",
     ],
   },
+    "image-converter": {
+    Workspace: lazy(() => import("./ImageConverterTool")),
+    howTo: [
+      "Choose your images, or drop them on the box. You can add several at once.",
+      "Pick the format to convert to: JPG, PNG or WebP.",
+      "For JPG and WebP, set the quality. For JPG, you can also pick the background colour that fills transparent areas.",
+      "Select Convert images, then download each result.",
+    ],
+    limitations: [
+      "You can open JPG, PNG, WebP, GIF, BMP and AVIF images, as far as your browser supports them. Results are saved as JPG, PNG or WebP.",
+      "For animated images such as GIFs, only the first frame is converted.",
+      "JPG does not support transparency, so transparent areas are filled with the background colour you choose.",
+      "JPG and WebP lose a little detail each time you save. Keep your original files.",
+      "Saving a new copy removes hidden information from the picture, such as camera details and location. Colours may shift slightly.",
+      "Whether WebP can be created depends on your browser. If it cannot, the tool tells you.",
+      "You can add up to 20 images at a time, up to 30 MB each. Very large pictures may fail on devices with little memory.",
+      "Your images are processed in your browser and are not sent to our server.",
+    ],
+  },
+  "image-compressor": {
+    Workspace: lazy(() => import("./ImageCompressorTool")),
+    howTo: [
+      "Choose your images, or drop them on the box. You can add several at once.",
+      "Lower the quality, make the picture smaller, or save it as WebP to reduce the file size.",
+      "Select Compress images.",
+      "Compare the sizes shown for each image, then download the ones you want.",
+    ],
+    limitations: [
+      "How much space you save depends on the picture. A file that is already well compressed may get bigger, and the tool shows you when that happens.",
+      "PNG files are lossless, so quality has no effect on them. To make a PNG smaller, reduce its size or save it as JPG or WebP.",
+      "JPG and WebP lose a little detail each time you save. Keep your original files.",
+      "For animated images such as GIFs, only the first frame is kept, and the result is saved as JPG unless you choose another format.",
+      "Transparent areas become white when the result is a JPG.",
+      "Saving a new copy removes hidden information from the picture, such as camera details and location.",
+      "You can add up to 20 images at a time, up to 30 MB each.",
+      "Your images are processed in your browser and are not sent to our server.",
+    ],
+  },
+    "svg-converter": {
+    Workspace: lazy(() => import("./SvgConverterTool")),
+    howTo: [
+      "Choose an SVG file, or drop it on the box.",
+      "Pick the format (PNG, JPG or WebP) and how wide the picture should be.",
+      "Select Convert SVG.",
+      "Select Download to save your image.",
+    ],
+    limitations: [
+      "One SVG at a time, up to 5 MB.",
+      "Fonts that are not stored inside the SVG may look different from how you see them elsewhere.",
+      "Pictures inside the SVG that point to other websites may not appear.",
+      "Your file is processed in your browser and is not sent to our server.",
+    ],
+  },
+  "favicon-generator": {
+    Workspace: lazy(() => import("./FaviconGeneratorTool")),
+    howTo: [
+      "Choose your logo. A square PNG or an SVG gives the best result.",
+      "Choose whether the picture should fit inside the square or fill it.",
+      "Select Create favicons.",
+      "Download the files one by one or as a ZIP, and add the shown code to your pages.",
+    ],
+    limitations: [
+      "One image at a time.",
+      "Very small icons lose detail, so a simple logo works best.",
+      "Your image is processed in your browser and is not sent to our server.",
+    ],
+  },
+    "qr-code-generator": {
+    Workspace: lazy(() => import("./QrCodeGeneratorTool")),
+    howTo: [
+      "Choose what the code is for: a link or text, a Wi-Fi network, an email or a phone number.",
+      "Fill in the details. The QR code appears and changes as you type.",
+      "Choose the colours and size if you want. Keep a dark code on a light background.",
+      "Select Download PNG or Download SVG. Scan the code with your phone before you print or share it.",
+    ],
+    limitations: [
+      "The text can be up to 1000 bytes long. Longer text makes a crowded code that is hard to scan.",
+      "A code cannot be changed after you print it. Create a new one if the link changes.",
+      "Very light colours or a transparent background on a dark surface can stop phones from reading the code.",
+      "Your text, links and Wi-Fi password are used in your browser only and are not sent to our server.",
+    ],
+  },
 };
