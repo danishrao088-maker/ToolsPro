@@ -25,6 +25,9 @@ import {
   Wrench,
   Minimize2,
   RefreshCw,
+    Merge,
+  RotateCw,
+  Split,
   type LucideIcon,
 } from "lucide-react";
 
@@ -56,6 +59,9 @@ export const iconMap: Record<string, LucideIcon> = {
   Wrench,
   Minimize2,
   RefreshCw,
+    Merge,
+  RotateCw,
+  Split,
 };
 
 export const fallbackIcon: LucideIcon = Wrench;

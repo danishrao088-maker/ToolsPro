@@ -421,5 +421,5 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "PDFs protected with a password cannot be rotated. Remove the password first.",
       "Your file is processed in your browser and is not sent to our server.",
     ],
-  },
+  },  
 };
