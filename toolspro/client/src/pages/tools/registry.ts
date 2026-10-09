@@ -377,4 +377,49 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "Your text, links and Wi-Fi password are used in your browser only and are not sent to our server.",
     ],
   },
+    "merge-pdf": {
+    Workspace: lazy(() => import("./MergePdfTool")),
+    howTo: [
+      "Choose two or more PDF files, or drop them on the box.",
+      "Use Up and Down to put the files in the order you want. Remove any file you do not need.",
+      "Select Merge PDFs.",
+      "Select Download merged.pdf.",
+    ],
+    limitations: [
+      "You can merge up to 20 files at a time, up to 50 MB each and 200 MB in total.",
+      "PDFs protected with a password cannot be merged. Remove the password first.",
+      "Interactive parts such as form fields, bookmarks and links may not be kept in the merged file.",
+      "Your files are processed in your browser and are not sent to our server.",
+    ],
+  },
+  "split-pdf": {
+    Workspace: lazy(() => import("./SplitPdfTool")),
+    howTo: [
+      "Choose a PDF file. The tool shows how many pages it has.",
+      "Choose how to split it, and type the pages, for example 1-3, 5, 8-. The 8- means page 8 to the end.",
+      "Select Split PDF.",
+      "Download each new PDF, or all of them together as a ZIP file.",
+    ],
+    limitations: [
+      "One PDF at a time, up to 50 MB.",
+      "PDFs protected with a password cannot be split. Remove the password first.",
+      "One split can create up to 200 PDFs.",
+      "Your file is processed in your browser and is not sent to our server.",
+    ],
+  },
+  "rotate-pdf": {
+    Workspace: lazy(() => import("./RotatePdfTool")),
+    howTo: [
+      "Choose a PDF file. The tool shows how many pages it has.",
+      "Choose how far to rotate, and whether to rotate all pages or only the pages you type.",
+      "Select Rotate PDF.",
+      "Select Download rotated PDF.",
+    ],
+    limitations: [
+      "One PDF at a time, up to 50 MB.",
+      "The tool does not show page previews. Check the result in your PDF viewer.",
+      "PDFs protected with a password cannot be rotated. Remove the password first.",
+      "Your file is processed in your browser and is not sent to our server.",
+    ],
+  },
 };

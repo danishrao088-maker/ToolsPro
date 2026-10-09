@@ -190,14 +190,14 @@ export const tools: Tool[] = [
     category: "pdf-and-document-tools", auditGroup: "B",
     description: "Combine several PDF files into one document.",
     icon: "Merge", tags: ["pdf", "merge"], keywords: ["combine pdf", "join pdf"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "rotate-pdf", name: "Rotate PDF", slug: "rotate-pdf",
     category: "pdf-and-document-tools", auditGroup: "B",
     description: "Rotate PDF pages and save the result.",
     icon: "RotateCw", tags: ["pdf", "rotate"], keywords: ["turn pdf", "fix orientation"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "pdf-to-jpg", name: "PDF to JPG", slug: "pdf-to-jpg",
@@ -232,7 +232,7 @@ export const tools: Tool[] = [
     category: "pdf-and-document-tools", auditGroup: "B",
     description: "Split a PDF into separate pages or ranges.",
     icon: "Split", tags: ["pdf", "split"], keywords: ["extract pages", "separate pdf"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "compress-pdf", name: "Compress PDF", slug: "compress-pdf",
