@@ -28,22 +28,30 @@ function dosDateTime(date: Date): { time: number; day: number } {
   };
 }
 
-// Bina compression wala ("stored") ZIP. PNG pehle se compressed hoti hai, is liye yahan compression ka faida nahi.
-export function buildZip(files: ZipFile[], date: Date = new Date()): Uint8Array<ArrayBuffer> {
+// Ek file ka tayyar record: payload wo hai jo ZIP mein likha jata hai (asal ya compressed)
+interface Entry {
+  name: Uint8Array;
+  payload: Uint8Array;
+  size: number; // asal (uncompressed) lambai
+  crc: number;
+  method: 0 | 8; // 0 = stored, 8 = deflate
+}
+
+function prepareName(file: ZipFile, seen: Set<string>, encoder: TextEncoder): Uint8Array {
+  const name = encoder.encode(file.name);
+  if (name.length === 0 || name.length > 65535) throw new RangeError("Invalid file name.");
+  if (seen.has(file.name)) throw new RangeError(`Duplicate file name: ${file.name}`);
+  seen.add(file.name);
+  return name;
+}
+
+function checkCount(files: ZipFile[]): void {
   if (files.length === 0) throw new RangeError("A zip file needs at least one file.");
   if (files.length > 65535) throw new RangeError("Too many files for one zip file.");
+}
 
-  const encoder = new TextEncoder();
-  const seen = new Set<string>();
-  const entries = files.map((file) => {
-    const name = encoder.encode(file.name);
-    if (name.length === 0 || name.length > 65535) throw new RangeError("Invalid file name.");
-    if (seen.has(file.name)) throw new RangeError(`Duplicate file name: ${file.name}`);
-    seen.add(file.name);
-    return { name, data: file.data, crc: crc32(file.data) };
-  });
-
-  const localSize = entries.reduce((sum, e) => sum + 30 + e.name.length + e.data.length, 0);
+function assemble(entries: Entry[], date: Date): Uint8Array<ArrayBuffer> {
+  const localSize = entries.reduce((sum, e) => sum + 30 + e.name.length + e.payload.length, 0);
   const centralSize = entries.reduce((sum, e) => sum + 46 + e.name.length, 0);
   const total = localSize + centralSize + 22;
   if (total > 0xffffffff) throw new RangeError("The zip file would be too large.");
@@ -59,17 +67,17 @@ export function buildZip(files: ZipFile[], date: Date = new Date()): Uint8Array<
     view.setUint32(pos, 0x04034b50, true); // local file header
     view.setUint16(pos + 4, 20, true); // version needed
     view.setUint16(pos + 6, 0x0800, true); // naam UTF-8 mein hai
-    view.setUint16(pos + 8, 0, true); // method 0 = stored
+    view.setUint16(pos + 8, entry.method, true);
     view.setUint16(pos + 10, time, true);
     view.setUint16(pos + 12, day, true);
     view.setUint32(pos + 14, entry.crc, true);
-    view.setUint32(pos + 18, entry.data.length, true);
-    view.setUint32(pos + 22, entry.data.length, true);
+    view.setUint32(pos + 18, entry.payload.length, true); // compressed size
+    view.setUint32(pos + 22, entry.size, true); // uncompressed size
     view.setUint16(pos + 26, entry.name.length, true);
     view.setUint16(pos + 28, 0, true); // extra field nahi
     out.set(entry.name, pos + 30);
-    out.set(entry.data, pos + 30 + entry.name.length);
-    pos += 30 + entry.name.length + entry.data.length;
+    out.set(entry.payload, pos + 30 + entry.name.length);
+    pos += 30 + entry.name.length + entry.payload.length;
   }
 
   const centralStart = pos;
@@ -78,12 +86,12 @@ export function buildZip(files: ZipFile[], date: Date = new Date()): Uint8Array<
     view.setUint16(pos + 4, 20, true); // version made by
     view.setUint16(pos + 6, 20, true); // version needed
     view.setUint16(pos + 8, 0x0800, true);
-    view.setUint16(pos + 10, 0, true);
+    view.setUint16(pos + 10, entry.method, true);
     view.setUint16(pos + 12, time, true);
     view.setUint16(pos + 14, day, true);
     view.setUint32(pos + 16, entry.crc, true);
-    view.setUint32(pos + 20, entry.data.length, true);
-    view.setUint32(pos + 24, entry.data.length, true);
+    view.setUint32(pos + 20, entry.payload.length, true);
+    view.setUint32(pos + 24, entry.size, true);
     view.setUint16(pos + 28, entry.name.length, true);
     view.setUint16(pos + 30, 0, true); // extra
     view.setUint16(pos + 32, 0, true); // comment
@@ -105,4 +113,63 @@ export function buildZip(files: ZipFile[], date: Date = new Date()): Uint8Array<
   view.setUint16(pos + 20, 0, true); // comment nahi
 
   return out;
+}
+
+// Bina compression wala ("stored") ZIP. PNG/JPG pehle se compressed hoti hain, is liye yahan compression ka faida nahi.
+export function buildZip(files: ZipFile[], date: Date = new Date()): Uint8Array<ArrayBuffer> {
+  checkCount(files);
+  const encoder = new TextEncoder();
+  const seen = new Set<string>();
+  const entries: Entry[] = files.map((file) => ({
+    name: prepareName(file, seen, encoder),
+    payload: file.data,
+    size: file.data.length,
+    crc: crc32(file.data),
+    method: 0,
+  }));
+  return assemble(entries, date);
+}
+
+// Raw deflate (ZIP ka method 8). Browser mein CompressionStream se; na ho ya fail ho to null.
+async function deflateRaw(data: Uint8Array): Promise<Uint8Array | null> {
+  if (typeof CompressionStream === "undefined") return null;
+  try {
+    const stream = new Blob([new Uint8Array(data)]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+    return new Uint8Array(await new Response(stream).arrayBuffer());
+  } catch {
+    return null;
+  }
+}
+
+export interface PackedEntry {
+  name: string;
+  size: number; // asal lambai
+  packed: number; // ZIP mein lagne wali lambai
+}
+
+// ZIP jisme har file compress hoti hai, lekin sirf tab jab compress ho kar waqai chhoti ho (warna stored)
+export async function buildZipCompressed(
+  files: ZipFile[],
+  date: Date = new Date()
+): Promise<{ bytes: Uint8Array<ArrayBuffer>; entries: PackedEntry[] }> {
+  checkCount(files);
+  const encoder = new TextEncoder();
+  const seen = new Set<string>();
+  const entries: Entry[] = [];
+  for (const file of files) {
+    const name = prepareName(file, seen, encoder);
+    const deflated = file.data.length > 0 ? await deflateRaw(file.data) : null;
+    const useDeflate = deflated !== null && deflated.length < file.data.length;
+    entries.push({
+      name,
+      payload: useDeflate && deflated ? deflated : file.data,
+      size: file.data.length,
+      crc: crc32(file.data),
+      method: useDeflate ? 8 : 0,
+    });
+  }
+  return {
+    bytes: assemble(entries, date),
+    entries: entries.map((entry, index) => ({ name: files[index]?.name ?? "", size: entry.size, packed: entry.payload.length })),
+  };
 }

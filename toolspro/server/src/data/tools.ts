@@ -204,7 +204,7 @@ export const tools: Tool[] = [
     category: "pdf-and-document-tools", auditGroup: "B",
     description: "Convert PDF pages into JPG images.",
     icon: "FileImage", tags: ["pdf", "image"], keywords: ["pdf to image", "extract pages"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "word-to-pdf", name: "Word to PDF", slug: "word-to-pdf",
@@ -302,7 +302,7 @@ export const tools: Tool[] = [
     category: "pdf-and-document-tools", auditGroup: "B",
     description: "Package PDF pages or files into a ZIP archive.",
     icon: "Archive", tags: ["pdf", "zip"], keywords: ["zip pdf", "archive", "download all"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "website-page-snooper", name: "Website Page Snooper", slug: "website-page-snooper",
@@ -464,21 +464,21 @@ export const tools: Tool[] = [
     category: "image-tools", auditGroup: "B",
     description: "Extract text from images using OCR.",
     icon: "ScanText", tags: ["image", "ocr"], keywords: ["ocr", "extract text", "read image"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "jpg-to-word", name: "JPG to Word", slug: "jpg-to-word",
     category: "pdf-and-document-tools", auditGroup: "B",
     description: "Turn JPG images into an editable Word document.",
     icon: "FileType", tags: ["image", "word"], keywords: ["jpg to docx", "image to word"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "logo-maker", name: "Logo Maker", slug: "logo-maker",
     category: "design-tools", auditGroup: "B",
     description: "Design a simple logo and download it.",
     icon: "PenTool", tags: ["design", "logo"], keywords: ["logo design", "brand", "create logo"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "resume-builder", name: "Resume Builder", slug: "resume-builder",
@@ -492,7 +492,7 @@ export const tools: Tool[] = [
     category: "design-tools", auditGroup: "B",
     description: "Design a printable flyer.",
     icon: "Newspaper", tags: ["design", "flyer"], keywords: ["flyer", "leaflet", "print"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "poster-maker", name: "Poster Maker", slug: "poster-maker",
@@ -501,4 +501,5 @@ export const tools: Tool[] = [
     icon: "Image", tags: ["design", "poster"], keywords: ["poster", "banner", "print"],
     privacyMode: "browser", status: "planned",
   },
+
 ];

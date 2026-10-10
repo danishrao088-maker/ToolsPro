@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildZip, crc32 } from "./zip";
+import { buildZip, buildZipCompressed, crc32 } from "./zip";
 
 const text = (value: string) => new TextEncoder().encode(value);
 
@@ -70,5 +70,79 @@ describe("buildZip", () => {
     expect(() => buildZip([])).toThrow(RangeError);
     expect(() => buildZip([{ name: "a", data: text("1") }, { name: "a", data: text("2") }])).toThrow(/Duplicate/);
     expect(() => buildZip([{ name: "", data: text("1") }])).toThrow(RangeError);
+  });
+});
+
+// Deflate wali ZIP ko wapas parhna: browser/Node ka DecompressionStream istemal hota hai
+async function inflateRaw(data: Uint8Array): Promise<Uint8Array> {
+  const stream = new Blob([new Uint8Array(data)]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+async function readCompressedZip(zip: Uint8Array) {
+  const view = new DataView(zip.buffer, zip.byteOffset, zip.byteLength);
+  const end = zip.length - 22;
+  const count = view.getUint16(end + 10, true);
+  let pos = view.getUint32(end + 16, true);
+  const files: { name: string; method: number; data: Uint8Array; crc: number }[] = [];
+
+  for (let i = 0; i < count; i += 1) {
+    const method = view.getUint16(pos + 10, true);
+    const crc = view.getUint32(pos + 16, true);
+    const packed = view.getUint32(pos + 20, true);
+    const nameLength = view.getUint16(pos + 28, true);
+    const localOffset = view.getUint32(pos + 42, true);
+    const name = new TextDecoder().decode(zip.subarray(pos + 46, pos + 46 + nameLength));
+    const dataStart = localOffset + 30 + view.getUint16(localOffset + 26, true);
+    const payload = zip.slice(dataStart, dataStart + packed);
+    files.push({ name, method, data: method === 8 ? await inflateRaw(payload) : payload, crc });
+    pos += 46 + nameLength;
+  }
+  return files;
+}
+
+describe("buildZipCompressed", () => {
+  it("compresses text that repeats and can be read back exactly", async () => {
+    const big = text("hello world ".repeat(2000));
+    const result = await buildZipCompressed([{ name: "a.txt", data: big }]);
+    const files = await readCompressedZip(result.bytes);
+    expect(files[0]?.method).toBe(8);
+    expect(files[0]?.data).toEqual(big);
+    expect(files[0]?.crc).toBe(crc32(big));
+    expect(result.entries[0]?.size).toBe(big.length);
+    expect(result.entries[0]?.packed).toBeLessThan(big.length / 10);
+    expect(result.bytes.length).toBeLessThan(big.length / 5);
+  });
+
+  it("stores data that does not get smaller, and empty files", async () => {
+    let seed = 12345;
+    const noise = new Uint8Array(2000).map(() => {
+      seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+      return seed >>> 16;
+    });
+    const result = await buildZipCompressed([
+      { name: "noise.bin", data: noise },
+      { name: "empty.txt", data: new Uint8Array(0) },
+    ]);
+    const files = await readCompressedZip(result.bytes);
+    expect(files.map((f) => f.method)).toEqual([0, 0]);
+    expect(files[0]?.data).toEqual(noise);
+    expect(files[1]?.data.length).toBe(0);
+  });
+
+  it("mixes compressed and stored files and keeps the order and names", async () => {
+    const result = await buildZipCompressed([
+      { name: "تصویر.txt", data: text("abc".repeat(500)) },
+      { name: "b.bin", data: new Uint8Array([1, 2, 3]) },
+    ]);
+    const files = await readCompressedZip(result.bytes);
+    expect(files.map((f) => f.name)).toEqual(["تصویر.txt", "b.bin"]);
+    expect(files.map((f) => f.method)).toEqual([8, 0]);
+    expect(new TextDecoder().decode(files[0]?.data)).toBe("abc".repeat(500));
+  });
+
+  it("rejects an empty list and duplicate names", async () => {
+    await expect(buildZipCompressed([])).rejects.toThrow(RangeError);
+    await expect(buildZipCompressed([{ name: "a", data: text("1") }, { name: "a", data: text("2") }])).rejects.toThrow(/Duplicate/);
   });
 });

@@ -421,5 +421,98 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "PDFs protected with a password cannot be rotated. Remove the password first.",
       "Your file is processed in your browser and is not sent to our server.",
     ],
-  },  
+  }, 
+    "pdf-to-jpg": {
+    Workspace: lazy(() => import("./PdfToJpgTool")),
+    howTo: [
+      "Choose a PDF file. The tool shows how many pages it has.",
+      "Choose JPG or PNG, the resolution, and whether to convert all pages or only the pages you type.",
+      "Select Convert PDF and wait while each page is converted.",
+      "Download one page at a time, or all pages together as a ZIP file.",
+    ],
+    limitations: [
+      "One PDF at a time, up to 50 MB, and up to 100 pages in one conversion.",
+      "PDFs protected with a password cannot be converted. Remove the password first.",
+      "A higher resolution gives a sharper picture but a bigger file, and needs more memory in your browser.",
+      "Your file is processed in your browser and is not sent to our server.",
+    ],
+  },
+  "pdf-to-zip": {
+    Workspace: lazy(() => import("./PdfToZipTool")),
+    howTo: [
+      "Choose one or more PDF files, or drop them on the box.",
+      "Put the files in the order you like and remove any you do not need.",
+      "Select Create ZIP.",
+      "Select the Download button to save the ZIP file.",
+    ],
+    limitations: [
+      "Up to 20 files at a time, up to 50 MB each and 200 MB in total.",
+      "PDF files are often already compressed, so the ZIP file may be only a little smaller than the PDFs.",
+      "The files go into the ZIP file without any changes to their content.",
+      "Your files are processed in your browser and are not sent to our server.",
+    ],
+  }, 
+    "jpg-to-word": {
+    Workspace: lazy(() => import("./JpgToWordTool")),
+    howTo: [
+      "Choose one or more pictures, or drop them on the box.",
+      "Put the pictures in the order you like and remove any you do not need.",
+      "Choose the page size, the margin and how big each picture should be.",
+      "Select Create Word file, then select the Download button.",
+    ],
+    limitations: [
+      "Up to 20 pictures at a time, up to 30 MB each and 100 MB in total.",
+      "Each picture is placed on its own page as a picture. Text inside a picture is not converted into editable text.",
+      "Word may look slightly different in other programs, such as Google Docs or LibreOffice.",
+      "Your pictures are processed in your browser and are not sent to our server.",
+    ],
+  },
+      "image-to-text-converter": {
+    Workspace: lazy(() => import("./ImageToTextTool")),
+    howTo: [
+      "Choose a picture that has printed text, such as a photo of a page or a screenshot.",
+      "Choose the language of the text.",
+      "Select Extract text and wait. The first time can take longer.",
+      "Check the text, fix any mistakes in the box, then copy it or download it as a .txt file.",
+    ],
+    limitations: [
+      "One picture at a time, up to 20 MB. Very large pictures are made smaller before reading.",
+      "Printed text in a clear picture works best. Handwriting, blurry photos and unusual fonts may give wrong words.",
+      "Only the languages in the list are supported.",
+      "Always read the result once to check it. The tool can make mistakes.",
+      "Your picture is processed in your browser and is not sent to our server.",
+    ],
+  },
+    "logo-maker": {
+    Workspace: lazy(() => import("./LogoMakerTool")),
+    howTo: [
+      "Type the name of your business, brand or project. You can add a short tagline.",
+      "Choose a layout, a letter style and a symbol, and pick the colors you like.",
+      "Check the preview. It changes as you make choices.",
+      "Download the logo as a PNG picture or as an SVG file.",
+    ],
+    limitations: [
+      "This tool makes simple logos from a name and a ready-made symbol. It does not draw custom pictures.",
+      "Only fonts that are already on most computers are used, so the choice of letter styles is small.",
+      "The SVG file may look a little different on a computer that does not have the same fonts. The PNG always looks like the preview.",
+      "Check that your name or design is not already used by someone else before you use it as a trademark.",
+      "Your logo is made in your browser and is not sent to our server.",
+    ],
+  },
+    "flyer-maker": {
+    Workspace: lazy(() => import("./FlyerMakerTool")),
+    howTo: [
+      "Type a headline. Add a subtitle, a description, the details and a button text if you want them.",
+      "Choose a design, the paper size, the letter style and a colour. You can also add a picture.",
+      "Check the preview. It changes as you type.",
+      "Download the flyer as a PNG picture or as a PDF.",
+    ],
+    limitations: [
+      "This tool makes a one-page flyer from a few ready-made designs. You cannot move the items around.",
+      "If the text is too long for one page, a warning is shown. Make the text shorter.",
+      "Only fonts that are already on most computers are used.",
+      "The PDF holds the flyer as a picture, so its text cannot be selected or searched.",
+      "Your flyer and picture are processed in your browser and are not sent to our server.",
+    ],
+  },
 };

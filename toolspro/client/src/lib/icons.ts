@@ -28,6 +28,13 @@ import {
     Merge,
   RotateCw,
   Split,
+  FileImage,
+  FileArchive,
+  FileType,
+  PenTool,
+  ScanText,
+  Newspaper,
+
   type LucideIcon,
 } from "lucide-react";
 
@@ -62,6 +69,12 @@ export const iconMap: Record<string, LucideIcon> = {
     Merge,
   RotateCw,
   Split,
+  FileImage,
+  FileArchive,
+  FileType,
+  PenTool,
+  ScanText,
+  Newspaper,
 };
 
 export const fallbackIcon: LucideIcon = Wrench;
