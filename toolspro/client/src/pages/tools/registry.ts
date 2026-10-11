@@ -515,4 +515,37 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "Your flyer and picture are processed in your browser and are not sent to our server.",
     ],
   },
+    "poster-maker": {
+    Workspace: lazy(() => import("./PosterMakerTool")),
+    howTo: [
+      "Type a headline. Add a subtitle and details if you want them.",
+      "Choose a design, the paper size and a direction (tall or wide). Add a picture if the design uses one.",
+      "Check the preview. The headline is made as big as it can be while still fitting.",
+      "Download the poster as a PNG picture or as a PDF.",
+    ],
+    limitations: [
+      "This tool makes a one-page poster from a few ready-made designs. You cannot move the items around.",
+      "Only fonts that are already on most computers are used.",
+      "The PDF holds the poster as a picture, so its text cannot be selected or searched.",
+      "Large sizes at high quality need a lot of memory. If the download fails, choose a lower quality.",
+      "Your poster and picture are processed in your browser and are not sent to our server.",
+    ],
+  },
+  "resume-builder": {
+    Workspace: lazy(() => import("./ResumeBuilderTool")),
+        howTo: [
+      "Fill in your name and contact details. Add your LinkedIn, GitHub or other links with a short name for each.",
+      "Add a summary, your skills (one group per line), projects, education and, if you have it, work experience.",
+      "Choose the paper, the letter style and a colour, and check the preview.",
+      "Select Download PDF. Your details are not saved, so keep the PDF safe.",
+    ],
+    limitations: [
+      "The PDF supports English (Latin) letters only. Urdu, Arabic and emoji cannot be used.",
+      "There is one layout. You can change the paper, the letter style and the colour.",
+      "Links are clickable in the PDF, not in the preview on this page.",
+      "Your details are not saved. If you close the page, they are gone.",
+      "Check your resume yourself before you send it. The tool does not check spelling or facts.",
+      "Your details are processed in your browser and are not sent to our server.",
+    ],
+  },
 };

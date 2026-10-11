@@ -1,8 +1,13 @@
 import { PDFDocument } from "pdf-lib";
 import { describe, expect, it } from "vitest";
-import { pngToPdf } from "./flyerPdf";
+import { pngToPdf, pngToPdfSized } from "./flyerPdf";
 
-const PNG = Uint8Array.from(atob("iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAIAAADuuAg3AAAAIUlEQVR42mOUSznBQC5gYqAAjGoe1TyqeVTzqOZRzcQBAFh9AYKGs/tTAAAAAElFTkSuQmCC"), (c) => c.charCodeAt(0));
+const PNG = Uint8Array.from(
+  atob(
+    "iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAIAAADuuAg3AAAAIUlEQVR42mOUSznBQC5gYqAAjGoe1TyqeVTzqOZRzcQBAFh9AYKGs/tTAAAAAElFTkSuQmCC",
+  ),
+  (c) => c.charCodeAt(0),
+);
 
 describe("pngToPdf", () => {
   it("makes a one-page A4 PDF", async () => {
@@ -17,10 +22,20 @@ describe("pngToPdf", () => {
 
   it("uses the US Letter size", async () => {
     const doc = await PDFDocument.load(await pngToPdf(PNG, "letter"));
-    expect([doc.getPage(0).getWidth(), doc.getPage(0).getHeight()]).toEqual([612, 792]);
+    expect([doc.getPage(0).getWidth(), doc.getPage(0).getHeight()]).toEqual([
+      612, 792,
+    ]);
   });
 
   it("rejects data that is not a PNG", async () => {
     await expect(pngToPdf(new Uint8Array([1, 2, 3]), "a4")).rejects.toThrow();
+  });
+
+  it("makes a PDF page of any size in points", async () => {
+    const doc = await PDFDocument.load(
+      await pngToPdfSized(PNG, 841.89, 1190.55),
+    );
+    expect(doc.getPage(0).getWidth()).toBeCloseTo(841.89, 1);
+    expect(doc.getPage(0).getHeight()).toBeCloseTo(1190.55, 1);
   });
 });

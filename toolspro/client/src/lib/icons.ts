@@ -34,6 +34,7 @@ import {
   PenTool,
   ScanText,
   Newspaper,
+  FileUser,
 
   type LucideIcon,
 } from "lucide-react";
@@ -75,6 +76,7 @@ export const iconMap: Record<string, LucideIcon> = {
   PenTool,
   ScanText,
   Newspaper,
+  FileUser,
 };
 
 export const fallbackIcon: LucideIcon = Wrench;

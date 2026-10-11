@@ -485,7 +485,7 @@ export const tools: Tool[] = [
     category: "design-tools", auditGroup: "B",
     description: "Build a clean resume and download it as a file.",
     icon: "FileUser", tags: ["design", "resume"], keywords: ["cv", "curriculum vitae", "resume template"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "flyer-maker", name: "Flyer Maker", slug: "flyer-maker",
@@ -499,7 +499,7 @@ export const tools: Tool[] = [
     category: "design-tools", auditGroup: "B",
     description: "Design a poster and download it.",
     icon: "Image", tags: ["design", "poster"], keywords: ["poster", "banner", "print"],
-    privacyMode: "browser", status: "planned",
+    privacyMode: "browser", status: "active",
   },
 
 ];
