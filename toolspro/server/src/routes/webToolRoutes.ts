@@ -5,6 +5,7 @@ import {
   checkDown,
   checkRedirects,
   checkStatus,
+  domainAge,
   pingSite,
   seoScore,
   snoopPage,
@@ -20,3 +21,4 @@ webToolRouter.post("/meta", webToolLimiter, analyzeMeta);
 webToolRouter.post("/open-graph", webToolLimiter, analyzeOpenGraph);
 webToolRouter.post("/snoop", webToolLimiter, snoopPage);
 webToolRouter.post("/seo-score", webToolLimiter, seoScore);
+webToolRouter.post("/domain-age", webToolLimiter, domainAge);

@@ -1,5 +1,6 @@
 import { AppError } from "../utils/AppError";
 import { asyncHandler } from "../utils/asyncHandler";
+import { domainAgeService } from "../services/domainAgeService";
 import { webToolService } from "../services/webToolService";
 
 // Sab web tools ki body ek jaisi hai: { "url": "example.com" }
@@ -26,3 +27,4 @@ export const analyzeMeta = tool((url) => webToolService.analyzeMeta(url));
 export const analyzeOpenGraph = tool((url) => webToolService.analyzeOpenGraph(url));
 export const snoopPage = tool((url) => webToolService.snoop(url));
 export const seoScore = tool((url) => webToolService.seoScore(url));
+export const domainAge = tool((url) => domainAgeService.check(url));

@@ -104,8 +104,9 @@ describe("layoutResume", () => {
   });
   it("puts projects before work experience", () => {
     const texts = textOps(layout(sample)).map((op) => op.text);
-    expect(texts.indexOf("PROJECTS")).toBeLessThan(texts.indexOf("EXPERIENCE"));
-    expect(texts.indexOf("EXPERIENCE")).toBeLessThan(texts.indexOf("EDUCATION"));
+  
+    expect(texts.indexOf("EXPERIENCE")).toBeLessThan(texts.indexOf("PROJECTS"));
+     expect(texts.indexOf("PROJECTS")).toBeLessThan(texts.indexOf("EDUCATION"));
   });
   it("shows links by their name and makes only those clickable", () => {
     const r = layout(sample);

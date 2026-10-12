@@ -148,7 +148,7 @@ export const tools: Tool[] = [
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Trace the redirect chain of any URL.",
     icon: "Route", tags: ["url", "seo"], keywords: ["301", "302", "redirect chain", "http status"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "what-is-my-browser", name: "What Is My Browser", slug: "what-is-my-browser",
@@ -309,7 +309,7 @@ export const tools: Tool[] = [
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Inspect the public HTML and headers of a web page.",
     icon: "ScanSearch", tags: ["web", "inspect"], keywords: ["view source", "page inspector", "headers"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "mobile-friendly-test", name: "Mobile Friendly Test", slug: "mobile-friendly-test",
@@ -323,7 +323,7 @@ export const tools: Tool[] = [
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Check if a website responds and how fast.",
     icon: "Activity", tags: ["web", "network"], keywords: ["ping", "response time", "latency"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "page-speed-test", name: "Page Speed Test", slug: "page-speed-test",
@@ -337,7 +337,7 @@ export const tools: Tool[] = [
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Check the HTTP status of a web server.",
     icon: "Server", tags: ["web", "server"], keywords: ["http status", "server response", "uptime"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "google-index-checker", name: "Google Index Checker", slug: "google-index-checker",
@@ -360,7 +360,7 @@ export const tools: Tool[] = [
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Find out when a domain was registered.",
     icon: "CalendarClock", tags: ["domain", "whois"], keywords: ["domain age", "registration date", "whois"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "geo-ip-locator", name: "GEO IP Locator", slug: "geo-ip-locator",
@@ -374,7 +374,7 @@ export const tools: Tool[] = [
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Check if a website is down for everyone or just you.",
     icon: "Power", tags: ["web", "status"], keywords: ["down", "outage", "website status"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "find-facebook-id", name: "Find Facebook ID", slug: "find-facebook-id",
@@ -389,14 +389,14 @@ export const tools: Tool[] = [
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Review a page for common on-page SEO issues.",
     icon: "TrendingUp", tags: ["seo", "audit"], keywords: ["seo audit", "seo score", "on-page seo"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "meta-tags-analyzer", name: "Meta Tags Analyzer", slug: "meta-tags-analyzer",
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Read and review the meta tags of any web page.",
     icon: "ScanText", tags: ["seo", "meta"], keywords: ["title", "description", "meta check"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "keyword-position", name: "Keyword Position", slug: "keyword-position",
@@ -435,7 +435,7 @@ export const tools: Tool[] = [
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Check the Open Graph tags of any web page.",
     icon: "BadgeCheck", tags: ["seo", "social"], keywords: ["og check", "social preview", "share preview"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "free-grammar-checker", name: "Free Grammar Checker", slug: "free-grammar-checker",
@@ -457,7 +457,7 @@ export const tools: Tool[] = [
     category: "text-tools", auditGroup: "D",
     description: "Shorten long text into a brief summary.",
     icon: "AlignLeft", tags: ["text", "summary"], keywords: ["summarize", "tldr", "shorten text"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "browser", status: "active",
   },
   {
     id: "image-to-text-converter", name: "Image to Text Converter", slug: "image-to-text-converter",

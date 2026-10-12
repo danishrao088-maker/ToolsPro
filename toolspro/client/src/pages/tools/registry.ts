@@ -1,13 +1,16 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from "react";
-
+const SERVER_PRIVACY = "To check a site, the address you type is sent to our server, which opens that page for you. The results are not saved by the tool.";
+const LOCAL_BLOCK = "Only normal web addresses are checked. Local and private addresses and unusual ports are refused.";
 export interface ToolImplementation {
   Workspace: LazyExoticComponent<ComponentType>;
   howTo: string[];
   limitations?: string[];
+  
 }
 
 // Har tool yahan ek entry hai. Slug server ki registry (tools.ts) ke slug se milna chahiye.
 export const toolImplementations: Partial<Record<string, ToolImplementation>> = {
+  
   "uppercase-to-lowercase": {
     Workspace: lazy(() => import("./UppercaseToLowercaseTool")),
     howTo: [
@@ -546,6 +549,167 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "Your details are not saved. If you close the page, they are gone.",
       "Check your resume yourself before you send it. The tool does not check spelling or facts.",
       "Your details are processed in your browser and are not sent to our server.",
+    ],
+  },
+    "check-server-status": {
+    Workspace: lazy(() => import("./CheckServerStatusTool")),
+    howTo: [
+      "Type the website address, for example example.com.",
+      "Select Check status.",
+      "Read the status code, the answer time and the response headers.",
+      "To see where a redirect goes, use the Redirect Checker.",
+    ],
+    limitations: [
+      "The check runs from our server, not from your computer or your country.",
+      "The tool does not follow redirects. A 301 or 302 means the address points somewhere else.",
+      "Some sites refuse requests from servers and may answer 403 even if they open in your browser.",
+      LOCAL_BLOCK,
+      SERVER_PRIVACY,
+    ],
+  },
+  "redirect-checker": {
+    Workspace: lazy(() => import("./RedirectCheckerTool")),
+    howTo: [
+      "Type the address you want to follow.",
+      "Select Check redirects.",
+      "Read each step: the status code, whether the redirect is permanent or temporary, and where it goes.",
+      "Use the notes to find long chains or temporary redirects.",
+    ],
+    limitations: [
+      "The check follows up to 10 redirects and then stops.",
+      "It runs from our server. A site that redirects visitors by country or device may redirect you differently.",
+      "Redirects done by JavaScript or by a meta refresh tag are not followed. Only server redirects are.",
+      LOCAL_BLOCK,
+      SERVER_PRIVACY,
+    ],
+  },
+  "is-it-down": {
+    Workspace: lazy(() => import("./IsItDownTool")),
+    howTo: [
+      "Type the website address.",
+      "Select Check now.",
+      "Read the answer: up, answering with an error, or down, and why.",
+      "If it is up for us but not for you, the problem may be your network or your country.",
+    ],
+    limitations: [
+      "The check runs from our server. A site can be up for us and down for you, or the other way round.",
+      "A site that blocks server visitors may look like it is answering with an error.",
+      "The tool checks the web page only, not other services of the same website.",
+      LOCAL_BLOCK,
+      SERVER_PRIVACY,
+    ],
+  },
+  "online-ping-website-tool": {
+    Workspace: lazy(() => import("./OnlinePingTool")),
+    howTo: [
+      "Type the website address.",
+      "Select Ping website. Four requests are sent one after another.",
+      "Read how many answered and the fastest, average and slowest time.",
+      "Run it again later to compare.",
+    ],
+    limitations: [
+      "This is not a network (ICMP) ping. It measures how fast the web server answers an HTTP request, including name lookup and connection time.",
+      "The times are measured from our server and change with distance and load.",
+      "Only four requests are sent, so the numbers are a rough guide.",
+      LOCAL_BLOCK,
+      SERVER_PRIVACY,
+    ],
+  },
+  "meta-tags-analyzer": {
+    Workspace: lazy(() => import("./MetaTagsAnalyzerTool")),
+    howTo: [
+      "Type the address of the page.",
+      "Select Analyze meta tags.",
+      "Read each check: title, description, robots, canonical link, viewport, language and the main heading.",
+      "Fix the items marked Check this or Missing, then run the check again.",
+    ],
+    limitations: [
+      "The recommended lengths are common rules of thumb, not strict rules of any search engine.",
+      "Only the HTML sent by the server is read. Tags added later by JavaScript are not seen.",
+      "Only the first 1 MB of the page is read.",
+      LOCAL_BLOCK,
+      SERVER_PRIVACY,
+    ],
+  },
+  "open-graph-checker": {
+    Workspace: lazy(() => import("./OpenGraphCheckerTool")),
+    howTo: [
+      "Type the address of the page you want to share.",
+      "Select Check Open Graph tags.",
+      "Look at the simple share preview and read each tag: found, recommended or missing.",
+      "Add the missing tags to your page and check again.",
+    ],
+    limitations: [
+      "The preview is simple. Facebook, X, LinkedIn and WhatsApp each draw their own card in their own way.",
+      "Social sites may keep an old copy of your page for a while, so a change may not show there at once.",
+      "The preview picture is loaded only if you select the button, and it is loaded from the other website by your browser.",
+      LOCAL_BLOCK,
+      SERVER_PRIVACY,
+    ],
+  },
+  "website-page-snooper": {
+    Workspace: lazy(() => import("./PageSnooperTool")),
+    howTo: [
+      "Type the address of the page.",
+      "Select Inspect page.",
+      "Read the overview, the headings, the links, the images and the response headers.",
+      "Open the list of links to see where the page points.",
+    ],
+    limitations: [
+      "Only the HTML sent by the server is read. Content added later by JavaScript is not seen.",
+      "Only the first 1 MB of the page is read, and the list shows up to 100 different links.",
+      "Cookie values are never shown.",
+      LOCAL_BLOCK,
+      SERVER_PRIVACY,
+    ],
+  },
+  "website-seo-score-checker": {
+    Workspace: lazy(() => import("./SeoScoreTool")),
+    howTo: [
+      "Type the address of the page.",
+      "Select Check SEO score.",
+      "Read the score and each check with its points.",
+      "Fix the failed checks first, then run the check again.",
+    ],
+    limitations: [
+      "The score checks a few basic on-page points. It is not a prediction of search ranking.",
+      "Only the HTML sent by the server is checked. Content added later by JavaScript is not seen.",
+      "Only one page is checked, not the whole website.",
+      "The load time is measured from our server and changes from run to run.",
+      LOCAL_BLOCK,
+      SERVER_PRIVACY,
+    ],
+  },
+    "domain-age-checker": {
+    Workspace: lazy(() => import("./DomainAgeCheckerTool")),
+    howTo: [
+      "Type the domain name, for example example.com.",
+      "Select Check domain age.",
+      "Read the age, the date it was registered and when it expires.",
+      "Check the registrar and the name servers to see where the domain is managed.",
+    ],
+    limitations: [
+      "The date is when the current registration record was created. A domain that expired and was registered again can show a newer date than the website's real history.",
+      "Some domain endings, such as .pk, do not publish their records through RDAP, so their age cannot be found here.",
+      "The owner's personal details are never shown.",
+      "Only domain names work. IP addresses, and local or private names, are refused.",
+      "To find the age, the domain you type is sent to our server, which asks the public domain registry for the record. The results are not saved by the tool.",
+    ],
+  },
+  "text-summarizer": {
+    Workspace: lazy(() => import("./TextSummarizerTool")),
+    howTo: [
+      "Paste or type your text.",
+      "Choose how many sentences to keep and how to show them.",
+      "Select Summarize.",
+      "Read the result, then copy it or download it as a text file.",
+    ],
+    limitations: [
+      "This tool picks the most important sentences from your own text. It does not write new sentences, so the result can feel choppy.",
+      "It does not understand meaning. Always read the original for anything important.",
+      "It works best on English articles. For other languages, common words may be counted as important.",
+      "The text can be up to 200,000 characters.",
+      "Your text is processed in your browser and is not sent to our server.",
     ],
   },
 };

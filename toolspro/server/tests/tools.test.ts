@@ -14,7 +14,7 @@ describe("GET /api/tools", () => {
     const slugs = (res.body.data as { slug: string }[]).map((t) => t.slug).sort();
     const expected = tools.filter((t) => t.status === "active").map((t) => t.slug).sort();
     expect(slugs).toEqual(expected);
-    expect(slugs).toHaveLength(35); // 2024-06-06 tak active tools ki 
+    expect(slugs).toHaveLength(45); // 2024-06-06 tak active tools ki 
   });
   it("returns only active tools, without internal fields", async () => {
     const activeSlugs = new Set(tools.filter((t) => t.status === "active").map((t) => t.slug));

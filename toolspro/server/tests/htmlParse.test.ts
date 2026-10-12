@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { decodeEntities, metaValue, parseHtml } from "../src/services/htmlParse";
+import {
+  decodeEntities,
+  metaValue,
+  parseHtml,
+} from "../src/services/htmlParse";
 
 const page = `<!DOCTYPE html>
 <html lang="en-US">
@@ -37,13 +41,17 @@ describe("parseHtml", () => {
     expect(parsed.title).toBe("My & Your Site");
     expect(parsed.metas.find((m) => m.charset)?.charset).toBe("utf-8");
     expect(metaValue(parsed, "description")).toBe('A short description "here"');
-    expect(metaValue(parsed, "viewport")).toBe("width=device-width, initial-scale=1");
+    expect(metaValue(parsed, "viewport")).toBe(
+      "width=device-width, initial-scale=1",
+    );
     expect(metaValue(parsed, "og:title")).toBe("OG Title");
     expect(metaValue(parsed, "robots")).toBeNull();
   });
 
   it("reads links and counts stylesheets and scripts", () => {
-    expect(parsed.links.find((l) => l.rel === "canonical")?.href).toBe("https://example.com/page");
+    expect(parsed.links.find((l) => l.rel === "canonical")?.href).toBe(
+      "https://example.com/page",
+    );
     expect(parsed.links.find((l) => l.hreflang === "fr")?.href).toBe("/fr");
     expect(parsed.stylesheetCount).toBe(2);
     expect(parsed.scriptCount).toBe(2);
@@ -51,14 +59,24 @@ describe("parseHtml", () => {
   });
 
   it("ignores things inside scripts, styles and comments", () => {
-    expect(parsed.headings.map((h) => h.text)).toEqual(["Main heading", "Sub & more"]);
-    expect(parsed.anchors.map((a) => a.href)).toEqual(["/about", "https://other.com/x?y=1&z=2"]);
+    expect(parsed.headings.map((h) => h.text)).toEqual([
+      "Main heading",
+      "Sub & more",
+    ]);
+    expect(parsed.anchors.map((a) => a.href)).toEqual([
+      "/about",
+      "https://other.com/x?y=1&z=2",
+    ]);
     expect(parsed.title).not.toContain("fake");
   });
 
   it("reads headings, anchors and images", () => {
     expect(parsed.headings.map((h) => h.level)).toEqual([1, 2]);
-    expect(parsed.anchors[0]).toEqual({ href: "/about", text: "About us", rel: "nofollow" });
+    expect(parsed.anchors[0]).toEqual({
+      href: "/about",
+      text: "About us",
+      rel: "nofollow",
+    });
     expect(parsed.images).toEqual([
       { src: "/p.png", alt: "A picture" },
       { src: "/q.png", alt: "" },
@@ -82,14 +100,21 @@ describe("parseHtml on odd input", () => {
 
   it("does not hang on unclosed tags and huge junk", () => {
     const started = Date.now();
-    const junk = "<a href='x'>".repeat(20000) + "<h1>".repeat(20000) + "<" .repeat(50000) + "<script>".repeat(5000) + "<!-- never closed";
+    const junk =
+      "<a href='x'>".repeat(20000) +
+      "<h1>".repeat(20000) +
+      "<".repeat(50000) +
+      "<script>".repeat(5000) +
+      "<!-- never closed";
     const parsed = parseHtml(junk);
     expect(Date.now() - started).toBeLessThan(2000);
     expect(parsed.anchors.length).toBeLessThanOrEqual(5000);
   });
 
   it("keeps the first value of a repeated attribute and the first title", () => {
-    const parsed = parseHtml('<title>First</title><title>Second</title><a href="/one" href="/two">x</a><html lang="fr">');
+    const parsed = parseHtml(
+      '<title>First</title><title>Second</title><a href="/one" href="/two">x</a><html lang="fr">',
+    );
     expect(parsed.title).toBe("First");
     expect(parsed.anchors[0]!.href).toBe("/one");
     expect(parsed.lang).toBe("fr");
@@ -103,6 +128,8 @@ describe("parseHtml on odd input", () => {
 
 describe("decodeEntities", () => {
   it("decodes common and numeric entities and leaves unknown ones", () => {
-    expect(decodeEntities("a &amp; b &lt;c&gt; &#65;&#x42; &unknown; &#99999999;")).toBe("a & b <c> AB &unknown; &#99999999;");
+    expect(
+      decodeEntities("a &amp; b &lt;c&gt; &#65;&#x42; &unknown; &#99999999;"),
+    ).toBe("a & b <c> AB &unknown; &#99999999;");
   });
 });
