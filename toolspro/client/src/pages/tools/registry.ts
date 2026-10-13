@@ -7,6 +7,25 @@ export interface ToolImplementation {
   limitations?: string[];
   
 }
+// Compress PDF to <size> ke 8 tools ka ek jaisa matan. Sirf size ka naam badalta hai.
+const compressToSize = (label: string, load: () => Promise<{ default: ComponentType }>): ToolImplementation => ({
+  Workspace: lazy(load),
+  howTo: [
+    "Choose your PDF file, or drop it on the box.",
+    "Select Compress PDF.",
+    "Wait while the tool tries a few sizes. For long PDFs this can take a minute.",
+    `Check the new size. If it is under ${label}, select Download compressed PDF.`,
+  ],
+  limitations: [
+    "If a light clean-up is enough to reach the size, the text stays selectable. If not, each page becomes a picture, and the text can no longer be selected or searched.",
+    `The tool aims to get under ${label}, but it cannot promise it. PDFs with many pages or large pictures may stay bigger, and the tool tells you when the goal was not reached.`,
+    "Very small sizes make the pages soft. Always check the result before you send it.",
+    "Forms, links and bookmarks are not kept when the pages become pictures.",
+    "One PDF at a time, up to 50 MB. To turn pages into pictures the PDF can have up to 100 pages.",
+    "PDFs protected with a password cannot be compressed. Remove the password first.",
+    "Your file is processed in your browser and is not sent to our server.",
+  ],
+});
 
 // Har tool yahan ek entry hai. Slug server ki registry (tools.ts) ke slug se milna chahiye.
 export const toolImplementations: Partial<Record<string, ToolImplementation>> = {
@@ -551,6 +570,32 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "Your details are processed in your browser and are not sent to our server.",
     ],
   },
+    "compress-pdf": {
+    Workspace: lazy(() => import("./CompressPdfTool")),
+    howTo: [
+      "Choose your PDF file, or drop it on the box.",
+      "Choose how much to compress. Keep the text (light) keeps the text selectable. The other levels make the file smaller by turning pages into pictures.",
+      "Select Compress PDF.",
+      "Check the new size, then select Download compressed PDF.",
+    ],
+    limitations: [
+      "The light level keeps the text selectable, but the file may get only a little smaller.",
+      "The other levels turn each page into a picture, so the text can no longer be selected or searched.",
+      "If the result would not be smaller, the tool leaves your PDF as it is and tells you.",
+      "Forms, links and bookmarks are not kept when the pages become pictures.",
+      "One PDF at a time, up to 50 MB. The picture levels work for up to 100 pages.",
+      "PDFs protected with a password cannot be compressed. Remove the password first.",
+      "Your file is processed in your browser and is not sent to our server.",
+    ],
+  },
+  "compress-pdf-to-50kb": compressToSize("50 KB", () => import("./CompressPdfTargets").then((m) => ({ default: m.CompressTo50Kb }))),
+  "compress-pdf-to-100kb": compressToSize("100 KB", () => import("./CompressPdfTargets").then((m) => ({ default: m.CompressTo100Kb }))),
+  "compress-pdf-to-150kb": compressToSize("150 KB", () => import("./CompressPdfTargets").then((m) => ({ default: m.CompressTo150Kb }))),
+  "compress-pdf-to-200kb": compressToSize("200 KB", () => import("./CompressPdfTargets").then((m) => ({ default: m.CompressTo200Kb }))),
+  "compress-pdf-to-300kb": compressToSize("300 KB", () => import("./CompressPdfTargets").then((m) => ({ default: m.CompressTo300Kb }))),
+  "compress-pdf-to-500kb": compressToSize("500 KB", () => import("./CompressPdfTargets").then((m) => ({ default: m.CompressTo500Kb }))),
+  "compress-pdf-to-1mb": compressToSize("1 MB", () => import("./CompressPdfTargets").then((m) => ({ default: m.CompressTo1Mb }))),
+  "compress-pdf-to-2mb": compressToSize("2 MB", () => import("./CompressPdfTargets").then((m) => ({ default: m.CompressTo2Mb }))),
     "check-server-status": {
     Workspace: lazy(() => import("./CheckServerStatusTool")),
     howTo: [
@@ -712,4 +757,5 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "Your text is processed in your browser and is not sent to our server.",
     ],
   },
+  
 };
