@@ -2,7 +2,9 @@ import { AppError } from "../utils/AppError";
 import { parseHtml, type ParsedHtml } from "./htmlParse";
 import { FetchFailure, safeFetcher, type FailReason, type RedirectResult, type SafeFetcher } from "./safeFetch";
 import { analyzeMeta, analyzeOpenGraph, scorePage, snoopPage, type PageInfo } from "./webAnalysis";
-
+import { analyzeMobile } from "./mobileCheck";
+import { scanHtml } from "./htmlScan";
+import { checkSpeed, type Compression } from "./speedCheck";
 export interface Failure {
   reason: FailReason;
   message: string;
@@ -163,7 +165,7 @@ export function createWebToolService(fetcher: SafeFetcher = safeFetcher) {
   }
 
   // ---------- HTML tools ----------
-  async function loadPage(input: string): Promise<{ parsed: ParsedHtml; page: PageInfo }> {
+    async function loadPage(input: string): Promise<{ parsed: ParsedHtml; page: PageInfo; html: string }> {
     const start = fetcher.parse(input).href;
     const result = await fetcher.follow(start, { maxRedirects: 5, timeoutMs: 15000, readFinalBody: true, maxBytes: 1_000_000 });
     if (result.failure) throw new AppError(502, "SITE_UNREACHABLE", `The page could not be loaded. ${result.failure.message}`);
@@ -179,12 +181,63 @@ export function createWebToolService(fetcher: SafeFetcher = safeFetcher) {
     const looksLikeHtml = type.includes("html") || (type === "" && final.body.trimStart().startsWith("<"));
     if (!looksLikeHtml) throw new AppError(422, "NOT_HTML", "This address did not return a web page (HTML).");
     return {
+      html: final.body,
       parsed: parseHtml(final.body),
       page: { url: final.url, status: final.status, headers: final.headers, timeMs: final.timeMs, bodyBytes: final.bodyBytes, truncated: final.truncated, redirects: result.hops.length - 1 },
     };
   }
 
+  // ---------- Mobile Friendly Test (buniyadi) ----------
+  const MAX_STYLESHEETS = 4;
+  const MAX_CSS_BYTES = 300_000;
+
+  // Page ki stylesheet links ko poore address mein badalta hai (sirf http/https, bina dohrao ke)
+  function stylesheetUrls(parsed: ParsedHtml, baseUrl: string): string[] {
+    const urls: string[] = [];
+    for (const link of parsed.links) {
+      if (!/\bstylesheet\b/i.test(link.rel) || link.href === "") continue;
+      try {
+        const url = new URL(link.href, baseUrl);
+        if ((url.protocol === "http:" || url.protocol === "https:") && !urls.includes(url.href)) urls.push(url.href);
+      } catch {
+        // kharab address chhor dein
+      }
+    }
+    return urls;
+  }
+
+  async function mobileFriendly(input: string) {
+    const { parsed, page, html } = await loadPage(input);
+    const urls = stylesheetUrls(parsed, page.url);
+    const texts: string[] = [];
+    // Har stylesheet usi mehfooz fetcher se aati hai (private address aur redirect dobara check hote hain). Nakami par chhor dete hain.
+    await Promise.all(
+      urls.slice(0, MAX_STYLESHEETS).map(async (url) => {
+        try {
+          const res = await fetcher.request(url, { timeoutMs: 6000, readBody: (status) => status === 200, maxBytes: MAX_CSS_BYTES });
+          const type = (res.headers["content-type"] ?? "").toLowerCase();
+          const encoding = (res.headers["content-encoding"] ?? "identity").toLowerCase();
+          if (res.status === 200 && encoding === "identity" && (type === "" || type.includes("css") || type.includes("text/plain"))) texts.push(res.body);
+        } catch {
+          // jo stylesheet na khule, us ke baghair jaanch chalti hai
+        }
+      })
+    );
+    return analyzeMobile(parsed, page, html, { linked: urls.length, texts });
+  }
+
+  // Page Speed ke liye ek extra request: server sikoda hua (gzip/br) jawab deta hai ya nahi
+  async function probeCompression(url: string): Promise<Compression> {
+    try {
+      const res = await fetcher.request(url, { timeoutMs: 8000, headers: { "accept-encoding": "gzip, deflate, br" } });
+      return { checked: true, encoding: res.headers["content-encoding"] ?? null };
+    } catch {
+      return { checked: false, encoding: null };
+    }
+  }
+
   return {
+    mobileFriendly,
     checkStatus,
     checkRedirects,
     checkDown,
@@ -204,6 +257,10 @@ export function createWebToolService(fetcher: SafeFetcher = safeFetcher) {
     seoScore: async (input: string) => {
       const { parsed, page } = await loadPage(input);
       return scorePage(parsed, page);
+    },
+        pageSpeed: async (input: string) => {
+      const { parsed, page, html } = await loadPage(input);
+      return checkSpeed(parsed, scanHtml(html), page, await probeCompression(page.url));
     },
   };
 }

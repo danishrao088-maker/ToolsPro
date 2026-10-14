@@ -6,9 +6,11 @@ import {
   checkRedirects,
   checkStatus,
   domainAge,
+  pageSpeed,
   pingSite,
   seoScore,
   snoopPage,
+  mobileFriendly,
 } from "../controllers/webToolController";
 import { pingLimiter, webToolLimiter } from "../middleware/rateLimiters";
 
@@ -22,3 +24,5 @@ webToolRouter.post("/open-graph", webToolLimiter, analyzeOpenGraph);
 webToolRouter.post("/snoop", webToolLimiter, snoopPage);
 webToolRouter.post("/seo-score", webToolLimiter, seoScore);
 webToolRouter.post("/domain-age", webToolLimiter, domainAge);
+webToolRouter.post("/mobile-friendly", webToolLimiter, mobileFriendly);
+webToolRouter.post("/page-speed", webToolLimiter, pageSpeed);

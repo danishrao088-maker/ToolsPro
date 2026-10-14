@@ -37,6 +37,9 @@ import {
   FileUser,
   CalendarClock,
   AlignLeft,
+  Smartphone,
+  Gauge,
+  SpellCheck,
 
   type LucideIcon,
 } from "lucide-react";
@@ -81,6 +84,9 @@ export const iconMap: Record<string, LucideIcon> = {
   FileUser,
   CalendarClock,
   AlignLeft,
+  Smartphone,
+  Gauge,
+  SpellCheck,
 };
 
 export const fallbackIcon: LucideIcon = Wrench;

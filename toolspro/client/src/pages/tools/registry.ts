@@ -757,5 +757,48 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "Your text is processed in your browser and is not sent to our server.",
     ],
   },
+    "mobile-friendly-test": {
+    Workspace: lazy(() => import("./MobileFriendlyTestTool")),
+    howTo: [
+      "Type or paste the address of the page you want to test.",
+      "Select Test mobile friendliness and wait a few seconds.",
+      "Read the score and the list of checks. Each one explains what was found.",
+      "Fix the failed checks first, then test again. For the real look on a phone, also open the page in your browser's phone view.",
+    ],
+    limitations: [
+      "This is a quick check of the page's HTML and its first linked stylesheets. It does not show how the page looks on a real phone.",
+      "Pages that build their content with JavaScript may show fewer details.",
+      "Only public web pages can be checked.",
+    ],
+  },
+  "page-speed-test": {
+    Workspace: lazy(() => import("./PageSpeedTestTool")),
+    howTo: [
+      "Type or paste the address of the page you want to check.",
+      "Select Check page speed and wait a few seconds.",
+      "Read the score and the checks. Each one explains what slows the page down.",
+      "Fix the failed checks, then run the test again to see the change.",
+    ],
+    limitations: [
+      "This is a quick check from our server. It is not a full browser test and does not measure Core Web Vitals.",
+      "Images, scripts and styles are not downloaded, so their real size is not counted.",
+      "Results can change from one test to the next, because server speed changes.",
+    ],
+  },
+    "free-grammar-checker": {
+    Workspace: lazy(() => import("./GrammarCheckerTool")),
+    howTo: [
+      "Paste or type your text into the box.",
+      "Select Check text. The issues are listed with the part of the text they belong to.",
+      "Select Apply fix on a suggestion you agree with, or Apply all to accept every suggested fix at once.",
+      "Fix the other items yourself, then check again. Read the final text once more before you use it.",
+    ],
+    limitations: [
+      "This tool follows fixed rules. It does not understand meaning, so it can miss mistakes and sometimes flag text that is fine.",
+      "Only a short list of common misspellings is checked. Your browser also underlines other misspelled words.",
+      "It is written for English text.",
+      "Your text stays in your browser.",
+    ],
+  },
   
 };

@@ -28,3 +28,5 @@ export const analyzeOpenGraph = tool((url) => webToolService.analyzeOpenGraph(ur
 export const snoopPage = tool((url) => webToolService.snoop(url));
 export const seoScore = tool((url) => webToolService.seoScore(url));
 export const domainAge = tool((url) => domainAgeService.check(url));
+export const mobileFriendly = tool((url) => webToolService.mobileFriendly(url));
+export const pageSpeed = tool((url) => webToolService.pageSpeed(url));

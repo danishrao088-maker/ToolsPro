@@ -1,8 +1,8 @@
 
 
-export type WebToolName = "status" | "redirects" | "is-it-down" | "ping" | "meta" | "open-graph" | "snoop" | "seo-score" | "domain-age";
-export type Level = "good" | "warning" | "missing" | "info";
+export type WebToolName = "status" | "redirects" | "is-it-down" | "ping" | "meta" | "open-graph" | "snoop" | "seo-score" | "domain-age" | "mobile-friendly" | "page-speed";
 
+export type Level = "good" | "warning" | "missing" | "info";
 export interface Failure {
   reason: string;
   message: string;
