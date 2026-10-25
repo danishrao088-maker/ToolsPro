@@ -193,6 +193,3 @@ These points need attention when running behind a reverse proxy such as Nginx on
 
 Open an issue to discuss a change before sending a large pull request. Keep the TypeScript strict settings, add tests for new logic, and make sure the checks in "Testing and quality checks" pass.
 
-## Licence
-
-The licence has not been chosen yet. Add a `LICENSE` file before sharing the code publicly.
