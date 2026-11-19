@@ -6,6 +6,7 @@ import { isDbConnected } from "./config/db";
 import { notFound, errorHandler } from "./middleware/errorHandler";
 import { apiRouter } from "./routes";
 import { shortRedirectRouter } from "./routes/shortUrlRoutes";
+import { installBlog } from "./blog";
 
 export const app = express();
 
@@ -27,6 +28,9 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/s", shortRedirectRouter);
+
+// WordPress se aaya blog: /blog/, /<slug>/, /category/..., sitemap.xml, rss.xml, images (blog/index.ts dekhein)
+installBlog(app);
 
 app.use(notFound);
 app.use(errorHandler);
