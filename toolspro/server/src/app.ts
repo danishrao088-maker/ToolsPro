@@ -5,12 +5,18 @@ import { env } from "./config/env";
 import { isDbConnected } from "./config/db";
 import { notFound, errorHandler } from "./middleware/errorHandler";
 import { apiRouter } from "./routes";
+import { shortRedirectRouter } from "./routes/shortUrlRoutes";
 
 export const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: env.CLIENT_ORIGINS }));
-app.use(express.json({ limit: "10kb" }));
+app.use(cors({ origin: env.CLIENT_ORIGINS, credentials: true }));
+
+// Aam requests ki body 10kb tak; sirf admin ke posts (jin me lamba article hota hai) ke liye 1mb tak
+const smallJson = express.json({ limit: "10kb" });
+const postJson = express.json({ limit: "1mb" });
+app.use((req, res, next) => (/^\/api\/admin\/posts(\/|$)/.test(req.path) ? postJson(req, res, next) : smallJson(req, res, next)));
+
 app.use("/api", apiRouter);
 
 app.get("/api/health", (_req, res) => {
@@ -19,6 +25,8 @@ app.get("/api/health", (_req, res) => {
     data: { status: "ok", database: isDbConnected() ? "connected" : "disconnected" },
   });
 });
+
+app.use("/s", shortRedirectRouter);
 
 app.use(notFound);
 app.use(errorHandler);
