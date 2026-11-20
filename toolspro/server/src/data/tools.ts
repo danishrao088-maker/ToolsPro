@@ -81,7 +81,7 @@ export const tools: Tool[] = [
     privacyMode: "browser", status: "active",
   },
   {
-    id: "fake-name-generator", name: "Fake Name Generator", slug: "fake-name-generator",
+    id: "fake-name-generator", name: "Name Generator", slug: "fake-name-generator",
     category: "text-tools", auditGroup: "A",
     description: "Generate random fake names for testing and samples.",
     icon: "Shuffle", tags: ["text", "random"], keywords: ["random name", "dummy data", "test data"],
