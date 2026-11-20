@@ -1,49 +1,49 @@
 import type { PostCard, PostView } from "./types";
 import { blogConfig } from "./config";
+import { CHROME_CSS, FONT_CSS, siteFooter, siteHeader } from "./chrome";
 import { escapeHtml, expandSeoTemplate } from "./content";
 
 // Blog ke server-rendered HTML pages. Google ko poora HTML milta hai, React ki zaroorat nahi.
 
 const CSS = `
-:root{--ink:#1f2328;--muted:#656d76;--line:#e5e7eb;--brand:#2333e0;--bg:#fff;--soft:#f6f8fa}
-*{box-sizing:border-box}
-body{margin:0;font:17px/1.7 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
-a{color:var(--brand)}
+a{color:var(--link)}
 img{max-width:100%;height:auto}
-.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+@media(min-width:640px){.wrap{padding:0 24px}}
+@media(min-width:1024px){.wrap{padding:0 32px}}
 .narrow{max-width:760px}
-header.site{border-bottom:1px solid var(--line)}
-header.site .wrap{display:flex;gap:24px;align-items:center;min-height:60px}
-header.site .brand{font-weight:700;font-size:20px;text-decoration:none}
-header.site nav a{margin-right:18px;text-decoration:none;color:var(--ink)}
-main{padding:32px 0 48px}
+main{flex:1;padding:32px 0 48px}
+main:focus{outline:none}
+h1,h2,h3,h4{color:var(--heading)}
 h1{font-size:2rem;line-height:1.25;margin:.2em 0 .4em}
-.crumbs,.meta{color:var(--muted);font-size:.9rem}
+.crumbs,.meta{color:var(--body);font-size:.9rem}
 .crumbs a,.meta a{color:inherit}
-.featured{display:block;margin:20px 0;border-radius:8px}
+.featured{display:block;margin:20px 0;border-radius:12px}
 .content{overflow-wrap:anywhere}
 .content h2,.content h3{line-height:1.3;margin-top:1.8em}
 .content table{display:block;overflow:auto;border-collapse:collapse}
 .content td,.content th{border:1px solid var(--line);padding:6px 10px}
-.content blockquote{margin:1em 0;padding:.2em 1em;border-left:4px solid var(--line);color:var(--muted)}
+.content blockquote{margin:1em 0;padding:.2em 1em;border-left:4px solid var(--line);color:var(--body)}
+.content pre{overflow:auto;padding:12px 16px;border-radius:8px;background:var(--surface-muted)}
 .content iframe{max-width:100%}
+.dark .content [style*="color"]{color:inherit!important}
 .aligncenter{display:block;margin:1em auto}.alignleft{float:left;margin:0 1em 1em 0}.alignright{float:right;margin:0 0 1em 1em}
-.tags a{display:inline-block;margin:0 6px 6px 0;padding:2px 10px;border:1px solid var(--line);border-radius:999px;font-size:.85rem;text-decoration:none}
+.tags a{display:inline-block;margin:0 6px 6px 0;padding:2px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--body);font-size:.85rem;text-decoration:none}
+.tags a:hover{color:var(--link)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px}
-.card{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
-.card .thumb{display:block;background:var(--soft);aspect-ratio:16/9}
+.card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.card .thumb{display:block;background:var(--surface-muted);aspect-ratio:16/9}
 .card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .card-body{padding:14px 16px 16px}
-.card .cat{font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--brand)}
+.card .cat{font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--link)}
 .card h2{font-size:1.1rem;line-height:1.35;margin:.3em 0}
-.card h2 a{color:var(--ink);text-decoration:none}
-.card p{margin:.4em 0;color:var(--muted);font-size:.95rem;line-height:1.5}
+.card h2 a{color:var(--heading);text-decoration:none}
+.card h2 a:hover{color:var(--link)}
+.card p{margin:.4em 0;color:var(--body);font-size:.95rem;line-height:1.5}
 .pager{display:flex;gap:8px;flex-wrap:wrap;margin:32px 0 0}
-.pager a,.pager span{padding:6px 12px;border:1px solid var(--line);border-radius:6px;text-decoration:none}
-.pager .cur{background:var(--brand);border-color:var(--brand);color:#fff}
+.pager a,.pager span{padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--heading);text-decoration:none}
+.pager .cur{background:var(--primary);border-color:var(--primary);color:#fff}
 .related{margin-top:48px}
-footer.site{border-top:1px solid var(--line);color:var(--muted);font-size:.9rem;padding:24px 0}
-footer.site a{margin-right:14px;color:inherit}
 @media(max-width:600px){h1{font-size:1.6rem}body{font-size:16px}}
 `;
 
@@ -97,26 +97,23 @@ export function layout(a: LayoutArgs): string {
 <meta name="description" content="${escapeHtml(a.description)}">
 <meta name="robots" content="${a.robots ?? "index,follow,max-image-preview:large"}">
 <link rel="canonical" href="${escapeHtml(a.canonical)}">
+<script src="/theme-init.js"></script>
+<script src="/blog-chrome.js" defer></script>
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 ${a.prevUrl ? `<link rel="prev" href="${escapeHtml(a.prevUrl)}">` : ""}
 ${a.nextUrl ? `<link rel="next" href="${escapeHtml(a.nextUrl)}">` : ""}
 <link rel="alternate" type="application/rss+xml" title="${name}" href="${escapeHtml(absoluteUrl("/rss.xml"))}">
 ${og}
 <meta name="twitter:card" content="${a.ogImage ? "summary_large_image" : "summary"}">
 ${(a.jsonLd ?? []).map(jsonLdScript).join("\n")}
-<style>${CSS}</style>
+<style>${FONT_CSS}${CHROME_CSS}${CSS}</style>
 </head>
 <body>
-<header class="site"><div class="wrap">
-<a class="brand" href="/">${name}</a>
-<nav><a href="/tools">Tools</a><a href="/blog/">Blog</a></nav>
-</div></header>
-<main><div class="wrap">
+${siteHeader()}
+<main id="main-content" tabindex="-1"><div class="wrap">
 ${a.body}
 </div></main>
-<footer class="site"><div class="wrap">
-<a href="/about">About</a><a href="/contact">Contact</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
-<div>&copy; ${new Date().getUTCFullYear()} ${name}</div>
-</div></footer>
+${siteFooter(new Date().getUTCFullYear())}
 </body>
 </html>`;
 }
