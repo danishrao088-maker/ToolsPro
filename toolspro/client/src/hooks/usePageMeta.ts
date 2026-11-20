@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-
-const SITE_NAME = "ToolsPro";
+import { SITE_NAME } from "../data/site";
 
 function setMetaDescription(content: string): void {
   let el = document.head.querySelector<HTMLMetaElement>('meta[name="description"]');

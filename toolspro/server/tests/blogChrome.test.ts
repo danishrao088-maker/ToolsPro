@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { LEGAL_LINKS, MAIN_LINKS, siteFooter, siteHeader } from "../src/blog/chrome";
+import { BRAND_PARTS, LEGAL_LINKS, MAIN_LINKS, siteFooter, siteHeader } from "../src/blog/chrome";
 import { renderListing } from "../src/blog/render";
 
 // React app ke menu ke links (client/src/data/navigation.ts) padh kar nikalna
@@ -11,7 +11,19 @@ function clientLinks(name: "mainLinks" | "legalLinks"): { label: string; path: s
   return [...block.matchAll(/label:\s*"([^"]+)",\s*path:\s*"([^"]+)"/g)].map((m) => ({ label: m[1], path: m[2] }));
 }
 
+// React app ka site ka naam (client/src/data/site.ts)
+function clientBrand(): string[] {
+  const file = readFileSync(path.resolve(process.cwd(), "../client/src/data/site.ts"), "utf8");
+  const parts = /SITE_NAME_PARTS\s*=\s*\[\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\]/.exec(file);
+  return parts ? [parts[1], parts[2]] : [];
+}
+
 describe("blog header and footer", () => {
+  it("use the same site name as the React app", () => {
+    expect(clientBrand()).toHaveLength(2);
+    expect([...BRAND_PARTS]).toEqual(clientBrand());
+  });
+
   it("use the same menu links as the React app (same order)", () => {
     expect(clientLinks("mainLinks").length).toBeGreaterThan(0);
     expect(MAIN_LINKS).toEqual(clientLinks("mainLinks"));
@@ -21,7 +33,7 @@ describe("blog header and footer", () => {
   it("header has the logo, all menu links, the buttons and a closed mobile menu", () => {
     const html = siteHeader();
     expect(html).toContain('class="skip-link" href="#main-content"');
-    expect(html).toContain("Tools<span>Pro</span>");
+    expect(html).toContain("Thesource <span>Full</span>");
     for (const item of MAIN_LINKS) expect(html).toContain(`href="${item.path}" class="nav-link`);
     for (const item of [...MAIN_LINKS, ...LEGAL_LINKS]) expect(html).toContain(`href="${item.path}" class="m-link`);
     expect(html).toContain('aria-label="Search tools"');
@@ -42,7 +54,7 @@ describe("blog header and footer", () => {
     expect(html).toContain("<h2>Navigation</h2>");
     expect(html).toContain("<h2>Legal</h2>");
     for (const item of [...MAIN_LINKS, ...LEGAL_LINKS]) expect(html).toContain(`<a href="${item.path}">${item.label}</a>`);
-    expect(html).toContain("&copy; 2031 ToolsPro. All rights reserved.");
+    expect(html).toContain("&copy; 2031 Thesource Full. All rights reserved.");
     expect(html).not.toContain("is-active");
   });
 

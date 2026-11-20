@@ -6,27 +6,27 @@ import { usePageMeta } from "../hooks/usePageMeta";
 // OWNER REVIEW before launch: have this text reviewed by a qualified legal professional.
 // It is intentionally plain and does not name a governing law or jurisdiction.
 export default function TermsPage() {
-  usePageMeta("Terms of Service", "The terms for using ToolsPro, including acceptable use and how to treat tool results.");
+  usePageMeta("Terms of Service", "The terms for using Thesource Full, including acceptable use and how to treat tool results.");
 
   return (
     <ContentPage
       title="Terms of Service"
       updated={LEGAL_LAST_UPDATED}
-      intro="These terms explain the rules for using ToolsPro. Please read them before you use the site."
+      intro="These terms explain the rules for using Thesource Full. Please read them before you use the site."
     >
-      <ContentSection id="using-toolspro" heading="Using ToolsPro">
-        <p>By using ToolsPro, you agree to these terms. If you do not agree, please do not use the site.</p>
+      <ContentSection id="using-thesource-full" heading="Using Thesource Full">
+        <p>By using Thesource Full, you agree to these terms. If you do not agree, please do not use the site.</p>
       </ContentSection>
 
-      <ContentSection id="what-we-provide" heading="What ToolsPro provides">
+      <ContentSection id="what-we-provide" heading="What Thesource Full provides">
         <p>
-          ToolsPro offers free online tools. We may add, change, limit or remove tools or features at any time, and the
+          Thesource Full offers free online tools. We may add, change, limit or remove tools or features at any time, and the
           site may sometimes be unavailable.
         </p>
       </ContentSection>
 
       <ContentSection id="acceptable-use" heading="Acceptable use">
-        <p>When you use ToolsPro, you agree not to:</p>
+        <p>When you use Thesource Full, you agree not to:</p>
         <BulletList
           items={[
             "Break the law, or harm, harass or deceive other people.",
@@ -43,7 +43,7 @@ export default function TermsPage() {
         <p>
           Tools produce results automatically from what you enter. Results may contain mistakes or may not suit your
           situation. Please check them before you rely on them, especially for legal, financial, medical, academic or
-          official purposes. ToolsPro does not provide professional advice. Keep a copy of any important data before you
+          official purposes. Thesource Full does not provide professional advice. Keep a copy of any important data before you
           convert or change it.
         </p>
       </ContentSection>
@@ -56,14 +56,14 @@ export default function TermsPage() {
             Privacy Policy
           </Link>
           . If you send us a message through the contact form, you allow us to read it and use it to respond to you and
-          to improve ToolsPro. Only send content that you are allowed to share.
+          to improve Thesource Full. Only send content that you are allowed to share.
         </p>
       </ContentSection>
 
       <ContentSection id="no-warranty" heading="No warranty and limits of liability">
         <p>
-          ToolsPro is provided "as is" and "as available", without promises of any kind, including that tools will be
-          accurate, error-free or always available. To the extent the law allows, ToolsPro and its owner are not liable
+          Thesource Full is provided "as is" and "as available", without promises of any kind, including that tools will be
+          accurate, error-free or always available. To the extent the law allows, Thesource Full and its owner are not liable
           for any loss or damage that results from using, or not being able to use, the site or its results. Nothing in
           these terms limits any right you have that the law does not allow to be limited.
         </p>
@@ -71,7 +71,7 @@ export default function TermsPage() {
 
       <ContentSection id="changes" heading="Changes to these terms">
         <p>
-          We may update these terms. The date at the top shows when they were last changed. If you keep using ToolsPro
+          We may update these terms. The date at the top shows when they were last changed. If you keep using Thesource Full
           after a change, you accept the updated terms.
         </p>
       </ContentSection>

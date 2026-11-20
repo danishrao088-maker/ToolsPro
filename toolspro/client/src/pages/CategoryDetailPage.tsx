@@ -36,7 +36,7 @@ export default function CategoryDetailPage() {
 
   usePageMeta(
     category ? category.name : "Category",
-    category ? category.description : "Browse tools by category on ToolsPro."
+    category ? category.description : "Browse tools by category on Thesource Full."
   );
 
   if (categoriesQuery.isError) {

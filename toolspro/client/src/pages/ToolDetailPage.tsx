@@ -32,7 +32,7 @@ export default function ToolDetailPage() {
     [toolsQuery.data, tool?.category, slug]
   );
 
-  usePageMeta(tool ? tool.name : "Tool", tool ? tool.description : "Free online tool from ToolsPro.");
+  usePageMeta(tool ? tool.name : "Tool", tool ? tool.description : "Free online tool from Thesource Full.");
 
   if (toolsQuery.isError) {
     return (

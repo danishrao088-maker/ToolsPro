@@ -36,8 +36,12 @@ const ICON_SUN = `<svg ${SVG_ATTRS} width="20" height="20"><circle cx="12" cy="1
 const ICON_MENU = `<svg ${SVG_ATTRS} width="22" height="22"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg>`;
 const ICON_CLOSE = `<svg ${SVG_ATTRS} width="22" height="22"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`;
 
+// Site ka naam: client/src/data/site.ts ke SITE_NAME_PARTS ke barabar rehna chahiye (blogChrome.test.ts check karta hai)
+export const BRAND_PARTS = ["Thesource", "Full"] as const;
+const BRAND_NAME = BRAND_PARTS.join(" ");
+
 function logo(gradientId: string): string {
-  return `<span class="logo"><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><linearGradient id="${gradientId}" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#5B35F5"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#${gradientId})"/><rect x="8" y="9" width="16" height="4" rx="2" fill="#fff"/><rect x="14" y="9" width="4" height="15" rx="2" fill="#fff"/></svg><span class="logo-text">Tools<span>Pro</span></span></span>`;
+  return `<span class="logo"><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><defs><linearGradient id="${gradientId}" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#5B35F5"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#${gradientId})"/><rect x="8" y="9" width="16" height="4" rx="2" fill="#fff"/><rect x="14" y="9" width="4" height="15" rx="2" fill="#fff"/></svg><span class="logo-text">${BRAND_PARTS[0]} <span>${BRAND_PARTS[1]}</span></span></span>`;
 }
 
 function link(item: NavLink, className: string): string {
@@ -78,7 +82,7 @@ export function siteFooter(year: number): string {
 <nav aria-label="Footer"><h2>Navigation</h2><ul>${main}</ul></nav>
 <nav aria-label="Legal"><h2>Legal</h2><ul>${legal}</ul></nav>
 </div>
-<p class="footer-copy">&copy; ${year} ToolsPro. All rights reserved.</p>
+<p class="footer-copy">&copy; ${year} ${escapeHtml(BRAND_NAME)}. All rights reserved.</p>
 </div>
 </footer>`;
 }
@@ -105,8 +109,9 @@ body{margin:0;min-height:100vh;display:flex;flex-direction:column;font:17px/1.7 
 .logo-link{display:inline-block;border-radius:6px;color:inherit;text-decoration:none}
 .logo{display:inline-flex;align-items:center;gap:8px}
 .logo svg{display:block}
-.logo-text{font-size:20px;line-height:28px;font-weight:700;letter-spacing:-.025em;color:var(--heading)}
+.logo-text{white-space:nowrap;font-size:20px;line-height:28px;font-weight:700;letter-spacing:-.025em;color:var(--heading)}
 .logo-text span{color:var(--link)}
+@media (max-width:359px){.logo{gap:6px}.logo svg{width:28px;height:28px}.logo-text{font-size:16px}}
 .site-header{position:sticky;top:0;z-index:40;border-bottom:1px solid var(--line);background:var(--surface)}
 .site-header__bar{display:flex;height:64px;align-items:center;justify-content:space-between;gap:16px}
 .main-nav{display:none;align-items:center;gap:4px}

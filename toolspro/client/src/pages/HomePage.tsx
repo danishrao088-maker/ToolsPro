@@ -2,10 +2,11 @@
 import { Hero } from "../components/home/Hero";
 import { PopularTools } from "../components/home/PopularTools";
 import { TrustStrip } from "../components/home/TrustStrip";
+import { SITE_NAME } from "../data/site";
 import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function HomePage() {
-  usePageMeta("ToolsPro", "Simple, powerful tools to make your everyday work easier. No registration, no hidden charges.");
+  usePageMeta(SITE_NAME, "Simple, powerful tools to make your everyday work easier. No registration, no hidden charges.");
   return (
     <>
       <Hero />

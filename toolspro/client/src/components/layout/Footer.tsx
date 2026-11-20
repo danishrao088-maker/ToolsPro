@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Container } from "../common/Container";
 import { Logo } from "../common/Logo";
 import { legalLinks, mainLinks } from "../../data/navigation";
+import { SITE_NAME } from "../../data/site";
 
 const footerLinkClass = "text-sm text-body transition-colors hover:text-link";
 
@@ -55,7 +56,7 @@ export function Footer() {
         </div>
 
         <p className="mt-8 border-t border-line pt-6 text-sm text-body">
-          © {year} ToolsPro. All rights reserved.
+          © {year} {SITE_NAME}. All rights reserved.
         </p>
       </Container>
     </footer>

@@ -1,6 +1,7 @@
 import { NavLink, Link, Outlet } from "react-router-dom";
 import { ExternalLink, LogOut } from "lucide-react";
 import { Container } from "../components/common/Container";
+import { SITE_NAME } from "../data/site";
 import { confirmLeave } from "./unsaved";
 import { useUnreadMessages } from "./hooks";
 import { smallButtonClass } from "./ui";
@@ -31,7 +32,7 @@ export function AdminLayout({ email, signingOut, onSignOut }: AdminLayoutProps) 
       <header className="border-b border-line bg-surface">
         <Container className="flex flex-wrap items-center gap-x-6 gap-y-2 py-3">
           <Link to="/admin" onClick={(e) => !confirmLeave() && e.preventDefault()} className="text-base font-bold text-heading">
-            ToolsPro Admin
+            {SITE_NAME} Admin
           </Link>
           <nav aria-label="Admin" className="order-last flex w-full gap-1 overflow-x-auto sm:order-none sm:w-auto sm:flex-1">
             {NAV.map((item) => (

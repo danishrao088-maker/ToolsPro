@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useQuery, type QueryClient } from "@tanstack/react-query";
+import { SITE_NAME } from "../data/site";
 import { ApiError } from "../services/api";
 import { adminApi } from "./adminApi";
 import type { TermKind } from "./types";
@@ -35,7 +36,7 @@ export function useNoIndex(): void {
 
 export function useAdminTitle(title: string): void {
   useEffect(() => {
-    document.title = `${title} | ToolsPro Admin`;
+    document.title = `${title} | ${SITE_NAME} Admin`;
   }, [title]);
 }
 

@@ -4,7 +4,7 @@ import { CategoryGrid } from "../components/tools/CategoryGrid";
 import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function CategoriesPage() {
-  usePageMeta("Categories", "Browse ToolsPro tools by category.");
+  usePageMeta("Categories", "Browse Thesource Full tools by category.");
 
   return (
     <Container className="py-10">
