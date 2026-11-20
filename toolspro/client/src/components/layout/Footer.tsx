@@ -26,9 +26,15 @@ export function Footer() {
             <ul className="mt-3 space-y-2">
               {mainLinks.map((item) => (
                 <li key={item.path}>
-                  <Link to={item.path} className={footerLinkClass}>
-                    {item.label}
-                  </Link>
+                  {item.serverPage ? (
+                    <a href={item.path} className={footerLinkClass}>
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link to={item.path} className={footerLinkClass}>
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
