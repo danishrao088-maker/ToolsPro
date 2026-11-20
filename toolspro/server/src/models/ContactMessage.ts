@@ -7,6 +7,8 @@ const contactMessageSchema = new Schema({
   email: { type: String, required: true, trim: true, lowercase: true, maxlength: 254 },
   subject: { type: String, required: true, trim: true, maxlength: 150 },
   message: { type: String, required: true, trim: true, maxlength: 2000 },
+  // Purane messages mein ye field nahi hota; unhein "unread" maana jata hai ({ read: { $ne: true } })
+  read: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now, expires: RETENTION_SECONDS },
 });
 

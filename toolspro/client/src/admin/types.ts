@@ -77,3 +77,23 @@ export interface PostListParams {
 }
 
 export type TermKind = "categories" | "tags";
+
+export interface AdminMessage {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  createdAt: string;
+  read: boolean;
+}
+
+export interface MessagePage extends PageOf<AdminMessage> {
+  unread: number;
+}
+
+export interface MessageListParams {
+  page: number;
+  pageSize: number;
+  unreadOnly: boolean;
+}

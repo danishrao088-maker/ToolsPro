@@ -8,6 +8,7 @@ import { adminApi } from "./adminApi";
 import { AdminLayout } from "./AdminLayout";
 import DashboardPage from "./DashboardPage";
 import LoginPage from "./LoginPage";
+import MessagesPage from "./MessagesPage";
 import PostsPage from "./PostsPage";
 import TaxonomyPage from "./TaxonomyPage";
 import { ME_KEY, adminQueryDefaults, fetchSession, useAdminTitle, useNoIndex } from "./hooks";
@@ -93,6 +94,7 @@ export default function AdminApp() {
             </Suspense>
           }
         />
+        <Route path="messages" element={<MessagesPage />} />
         <Route path="categories" element={<TaxonomyPage key="categories" kind="categories" />} />
         <Route path="tags" element={<TaxonomyPage key="tags" kind="tags" />} />
         <Route path="*" element={<AdminNotFound />} />

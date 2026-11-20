@@ -1,10 +1,13 @@
 import { ApiError } from "../services/api";
 import type { ApiResponse } from "../types/api";
 import type {
+  AdminMessage,
   AdminPostDetail,
   AdminPostSummary,
   AdminStats,
   AdminTerm,
+  MessageListParams,
+  MessagePage,
   PageOf,
   PostListParams,
   PostPayload,
@@ -72,6 +75,13 @@ export const adminApi = {
   createTerm: (kind: TermKind, payload: TermPayload) => adminRequest<AdminTerm>(`/${kind}`, json("POST", payload)),
   updateTerm: (kind: TermKind, id: string, payload: TermPayload) => adminRequest<AdminTerm>(`/${kind}/${encodeURIComponent(id)}`, json("PUT", payload)),
   deleteTerm: (kind: TermKind, id: string) => adminRequest<{ deleted: boolean }>(`/${kind}/${encodeURIComponent(id)}`, json("DELETE")),
+
+  listMessages: (params: MessageListParams) =>
+    adminRequest<MessagePage>(`/messages${queryString({ page: params.page, pageSize: params.pageSize, status: params.unreadOnly ? "unread" : undefined })}`),
+  unreadMessageCount: () => adminRequest<{ unread: number }>("/messages/unread-count"),
+  setMessageRead: (id: string, read: boolean) => adminRequest<AdminMessage>(`/messages/${encodeURIComponent(id)}`, json("PATCH", { read })),
+  markAllMessagesRead: () => adminRequest<{ updated: number }>("/messages/read-all", json("POST")),
+  deleteMessage: (id: string) => adminRequest<{ deleted: boolean }>(`/messages/${encodeURIComponent(id)}`, json("DELETE")),
 
   // Image seedha bytes ki tarah jati hai (Content-Type: image/png...), asli naam header mein
   uploadImage: (file: File) =>

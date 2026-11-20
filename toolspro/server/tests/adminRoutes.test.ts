@@ -95,3 +95,54 @@ describe("POST /api/admin/uploads", () => {
     expect(res.body.error.code).toBe("UPLOADS_NOT_CONFIGURED");
   });
 });
+
+
+describe("/api/admin/messages", () => {
+  const cookie = "toolspro_admin=tok.en";
+  const id = "65c000000000000000000001";
+
+  beforeEach(() => {
+    authenticate.mockReset();
+  });
+
+  it("needs a signed-in admin on every route", async () => {
+    authenticate.mockResolvedValue(null);
+    const checks = [
+      request(app).get("/api/admin/messages"),
+      request(app).get("/api/admin/messages/unread-count"),
+      request(app).post("/api/admin/messages/read-all"),
+      request(app).patch(`/api/admin/messages/${id}`).send({ read: true }),
+      request(app).delete(`/api/admin/messages/${id}`),
+    ];
+    for (const res of await Promise.all(checks)) {
+      expect(res.status).toBe(401);
+      expect(res.body.error.code).toBe("UNAUTHORIZED");
+    }
+  });
+
+  it("refuses changes that come from another website", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    const patch = await request(app).patch(`/api/admin/messages/${id}`).set("Origin", "https://evil.example").set("Cookie", cookie).send({ read: true });
+    const del = await request(app).delete(`/api/admin/messages/${id}`).set("Origin", "https://evil.example").set("Cookie", cookie);
+    const all = await request(app).post("/api/admin/messages/read-all").set("Origin", "https://evil.example").set("Cookie", cookie);
+    expect([patch.status, del.status, all.status]).toEqual([403, 403, 403]);
+  });
+
+  it("reaches the messages (and says so when the database is down, as in these tests)", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    for (const path of ["/api/admin/messages", "/api/admin/messages/unread-count"]) {
+      const res = await request(app).get(path).set("Cookie", cookie);
+      expect(res.status).toBe(503);
+      expect(res.body.error.code).toBe("DB_UNAVAILABLE");
+    }
+  });
+
+  it("answers 404 for a malformed id and 400 for a bad body before touching the database", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    const bad = await request(app).delete("/api/admin/messages/not-an-id").set("Cookie", cookie);
+    expect(bad.status).toBe(404);
+    const body = await request(app).patch(`/api/admin/messages/${id}`).set("Cookie", cookie).send({ read: "yes" });
+    expect(body.status).toBe(400);
+    expect(body.body.error.code).toBe("VALIDATION_ERROR");
+  });
+});

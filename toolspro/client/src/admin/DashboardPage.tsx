@@ -6,12 +6,13 @@ import { LoadingIndicator } from "../components/common/LoadingIndicator";
 import { getErrorMessage } from "../services/api";
 import { adminApi } from "./adminApi";
 import { formatDate } from "./editorUtils";
-import { adminQueryDefaults, useAdminTitle } from "./hooks";
+import { adminQueryDefaults, useAdminTitle, useUnreadMessages } from "./hooks";
 import { PageHeading, Panel, StatusBadge, primaryLinkClass } from "./ui";
 
 export default function DashboardPage() {
   useAdminTitle("Dashboard");
   const stats = useQuery({ queryKey: ["admin", "stats"], queryFn: adminApi.stats, ...adminQueryDefaults });
+  const unread = useUnreadMessages();
 
   const newPost = (
     <Link to="/admin/posts/new" className={primaryLinkClass}>
@@ -29,12 +30,13 @@ export default function DashboardPage() {
     { label: "Drafts", value: totals.drafts, to: "/admin/posts?status=draft" },
     { label: "Categories", value: totals.categories, to: "/admin/categories" },
     { label: "Tags", value: totals.tags, to: "/admin/tags" },
+    { label: "Unread messages", value: unread.data ? unread.data.unread : "–", to: "/admin/messages?status=unread" },
   ];
 
   return (
     <>
       <PageHeading title="Dashboard" description="Edit old posts, write new ones and keep categories and tags tidy." actions={newPost} />
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
         {cards.map((card) => (
           <Link key={card.label} to={card.to} className="rounded-xl border border-line bg-surface p-4 transition-colors hover:bg-surface-muted">
             <p className="text-2xl font-bold text-heading">{card.value}</p>

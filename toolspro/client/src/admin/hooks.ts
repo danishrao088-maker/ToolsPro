@@ -43,6 +43,16 @@ export function useTerms(kind: TermKind) {
   return useQuery({ queryKey: ["admin", "terms", kind], queryFn: () => adminApi.listTerms(kind), staleTime: 60_000, ...adminQueryDefaults });
 }
 
+// Na-parhe messages ki ginti (menu ka nishan). Admin page khula rahe to har minute dobara poochta hai.
+export function useUnreadMessages() {
+  return useQuery({
+    queryKey: ["admin", "messages", "unread"],
+    queryFn: adminApi.unreadMessageCount,
+    refetchInterval: 60_000,
+    ...adminQueryDefaults,
+  });
+}
+
 // Kuch badalne ke baad lists, ginti aur categories/tags ki post-count dobara mangwao (login wali query ko chhor kar)
 export function refreshAdminData(queryClient: QueryClient): Promise<void> {
   return queryClient.invalidateQueries({ queryKey: ["admin"], predicate: (query) => query.queryKey[1] !== "me" });

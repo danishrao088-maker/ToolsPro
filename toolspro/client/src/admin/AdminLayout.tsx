@@ -2,11 +2,13 @@ import { NavLink, Link, Outlet } from "react-router-dom";
 import { ExternalLink, LogOut } from "lucide-react";
 import { Container } from "../components/common/Container";
 import { confirmLeave } from "./unsaved";
+import { useUnreadMessages } from "./hooks";
 import { smallButtonClass } from "./ui";
 
 const NAV = [
   { to: "/admin", label: "Dashboard", end: true },
   { to: "/admin/posts", label: "Posts", end: false },
+  { to: "/admin/messages", label: "Messages", end: false },
   { to: "/admin/categories", label: "Categories", end: false },
   { to: "/admin/tags", label: "Tags", end: false },
 ];
@@ -23,6 +25,7 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ email, signingOut, onSignOut }: AdminLayoutProps) {
+  const unread = useUnreadMessages().data?.unread ?? 0;
   return (
     <div className="min-h-screen bg-page">
       <header className="border-b border-line bg-surface">
@@ -34,6 +37,12 @@ export function AdminLayout({ email, signingOut, onSignOut }: AdminLayoutProps) 
             {NAV.map((item) => (
               <NavLink key={item.to} to={item.to} end={item.end} className={navClass} onClick={(e) => !confirmLeave() && e.preventDefault()}>
                 {item.label}
+                {item.to === "/admin/messages" && unread > 0 ? (
+                  <span className="ml-1.5 rounded-full bg-primary px-1.5 py-0.5 align-middle text-xs font-semibold text-white">
+                    {unread > 99 ? "99+" : unread}
+                    <span className="sr-only"> unread</span>
+                  </span>
+                ) : null}
               </NavLink>
             ))}
           </nav>
