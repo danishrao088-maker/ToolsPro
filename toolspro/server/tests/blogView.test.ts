@@ -13,6 +13,7 @@ const post: PostRecord = {
   createdAt: new Date("2026-11-18T00:00:00.000Z"),
   updatedAt: new Date("2026-11-19T01:00:00.000Z"),
   category: { id: "65b000000000000000000001", name: "News", slug: "news" },
+  categories: [{ id: "65b000000000000000000001", name: "News", slug: "news" }],
   tags: [{ id: "65b000000000000000000002", name: "AI", slug: "ai" }],
   featuredImageUrl: "https://example.com/a.jpg",
   featuredImageAlt: "Alt",
@@ -28,11 +29,14 @@ describe("admin views", () => {
     expect(view).not.toHaveProperty("contentHtml");
     expect(JSON.stringify(view)).not.toContain("<p>");
   });
+  it("lists every category of the post", () => {
+    expect(adminSummary(post).categories).toEqual([{ id: "65b000000000000000000001", name: "News", slug: "news" }]);
+  });
   it("detail adds the content and the SEO fields", () => {
     expect(adminDetail(post)).toMatchObject({ contentHtml: "<p>Body</p>", readingMinutes: 3, seo: { metaTitle: "", metaDescription: "" } });
   });
   it("shows null for a post that was never published, and no category", () => {
-    const view = adminSummary({ ...post, publishedAt: null, category: null, tags: [] });
+    const view = adminSummary({ ...post, publishedAt: null, category: null, categories: [], tags: [] });
     expect(view.publishedAt).toBeNull();
     expect(view.category).toBeNull();
     expect(view.tags).toEqual([]);

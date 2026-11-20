@@ -3,7 +3,7 @@ import { isSpaRoute } from "../src/blog/spa";
 
 describe("isSpaRoute", () => {
   it("accepts the React routes", () => {
-    for (const p of ["/", "/tools", "/tools/", "/tools/json-formatter", "/categories", "/category/image-tools", "/about", "/contact", "/privacy", "/terms"]) {
+    for (const p of ["/", "/tools", "/tools/", "/tools/json-formatter", "/categories", "/category/image-tools", "/about", "/contact", "/privacy", "/terms", "/admin", "/admin/", "/admin/posts", "/admin/posts/65a000000000000000000001"]) {
       expect(isSpaRoute(p), p).toBe(true);
     }
   });
@@ -38,5 +38,10 @@ describe("installSpa fallback", () => {
     expect(missingImg.status).toBe(404);
     expect(missingImg.text).toBe("Not found");
     expect((await request(app).get("/api/ping")).body).toEqual({ ok: true });
+
+    const admin = await request(app).get("/admin/posts");
+    expect(admin.status).toBe(200);
+    expect(admin.headers["x-robots-tag"]).toBe("noindex, nofollow");
+    expect((await request(app).get("/tools")).headers["x-robots-tag"]).toBeUndefined();
   });
 });

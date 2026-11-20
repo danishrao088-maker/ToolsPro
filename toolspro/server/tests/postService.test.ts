@@ -252,3 +252,67 @@ describe("list and stats", () => {
     expect((await service.getPublished("my-first-post")).seo).toEqual({ title: "Custom SEO", description: "Custom description" });
   });
 });
+describe("categories, reserved addresses and imported content", () => {
+  const CAT2: FakeTerm = { id: "65b000000000000000000004", kind: "category", name: "Tech", slug: "tech", description: "" };
+
+  function setupTwoCategories() {
+    const fake = fakePostRepo([CAT, CAT2, TAG1]);
+    const sanitized: string[] = [];
+    const service = createPostService({
+      repo: fake.repo,
+      sanitize: (html) => {
+        sanitized.push(html);
+        return html.replace(/<script[\s\S]*?<\/script>/gi, "");
+      },
+      now: () => NOW,
+    });
+    return { ...fake, service, sanitized };
+  }
+
+  it("saves several categories, main one first", async () => {
+    const { service } = setupTwoCategories();
+    const post = await service.create(body({ categoryIds: [CAT2.id, CAT.id] }));
+    expect(post.category).toEqual({ id: CAT2.id, name: "Tech", slug: "tech" });
+    expect(post.categories.map((c) => c.slug)).toEqual(["tech", "news"]);
+  });
+  it("refuses a category that does not exist or is really a tag", async () => {
+    const { service } = setupTwoCategories();
+    expect(await code(service.create(body({ categoryIds: [CAT.id, "65b0000000000000000000ff"] })))).toBe("VALIDATION_ERROR");
+    expect(await code(service.create(body({ categoryIds: [TAG1.id] })))).toBe("VALIDATION_ERROR");
+  });
+  it("replaces the categories on update", async () => {
+    const { service } = setupTwoCategories();
+    const created = await service.create(body({ categoryIds: [CAT.id, CAT2.id] }));
+    const updated = await service.update(created.id, body({ categoryIds: [CAT2.id] }));
+    expect(updated.categories.map((c) => c.slug)).toEqual(["tech"]);
+  });
+  it("refuses a slug that belongs to the website itself", async () => {
+    const { service } = setupTwoCategories();
+    for (const slug of ["admin", "tools", "blog", "category", "wp-content"]) {
+      expect(await code(service.create(body({ slug }))), slug).toBe("VALIDATION_ERROR");
+    }
+  });
+  it("does not make a reserved address from a title", async () => {
+    const { service } = setupTwoCategories();
+    expect((await service.create(body({ title: "About" }))).slug).toBe("about-2");
+    expect((await service.create(body({ title: "Admin" }))).slug).toBe("admin-2");
+  });
+  it("refuses to move an existing post onto a reserved address", async () => {
+    const { service } = setupTwoCategories();
+    const created = await service.create(body());
+    expect(await code(service.update(created.id, body({ slug: "admin" })))).toBe("VALIDATION_ERROR");
+  });
+  it("leaves content alone when it did not change, and cleans it when it did", async () => {
+    const { service, sanitized, posts } = setupTwoCategories();
+    const created = await service.create(body({ contentHtml: "<p>One</p>" }));
+    // Purane (WordPress) post: ye HTML sanitize se na guzra hota (jaise <div> wala), phir bhi title badalne par waisa hi rehna chahiye
+    posts[0]!.contentHtml = '<div class="wp-block"><p>Legacy</p></div><iframe src="https://example.org/x"></iframe>';
+    sanitized.length = 0;
+    await service.update(created.id, body({ title: "New title", contentHtml: posts[0]!.contentHtml }));
+    expect(sanitized).toHaveLength(0);
+    expect(posts[0]!.contentHtml).toContain('<div class="wp-block">');
+    await service.update(created.id, body({ title: "New title", contentHtml: "<p>Edited</p><script>x</script>" }));
+    expect(sanitized).toHaveLength(1);
+    expect(posts[0]!.contentHtml).toBe("<p>Edited</p>");
+  });
+});

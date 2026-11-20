@@ -67,3 +67,31 @@ describe("POST /api/admin/logout", () => {
     expect(String(res.headers["set-cookie"])).toContain("Max-Age=0");
   });
 });
+describe("POST /api/admin/uploads", () => {
+  beforeEach(() => {
+    authenticate.mockReset();
+  });
+
+  it("needs a signed-in admin", async () => {
+    authenticate.mockResolvedValue(null);
+    const res = await request(app).post("/api/admin/uploads").set("Content-Type", "image/png").send(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0]));
+    expect(res.status).toBe(401);
+  });
+
+  it("refuses an upload that comes from another website", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    const res = await request(app).post("/api/admin/uploads").set("Origin", "https://evil.example").set("Content-Type", "image/png").send(Buffer.from([1, 2, 3]));
+    expect(res.status).toBe(403);
+  });
+
+  it("tells a signed-in admin when pictures cannot be saved (no folder configured in tests)", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    const res = await request(app)
+      .post("/api/admin/uploads")
+      .set("Cookie", "toolspro_admin=tok.en")
+      .set("Content-Type", "image/png")
+      .send(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0]));
+    expect(res.status).toBe(503);
+    expect(res.body.error.code).toBe("UPLOADS_NOT_CONFIGURED");
+  });
+});

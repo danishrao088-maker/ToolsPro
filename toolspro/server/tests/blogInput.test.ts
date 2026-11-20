@@ -30,6 +30,7 @@ describe("parsePostInput", () => {
       contentHtml: "",
       status: "draft",
       categoryId: null,
+      categoryIds: [],
       tagIds: [],
       featuredImageUrl: "",
       featuredImageAlt: "",
@@ -145,5 +146,37 @@ describe("parseListQuery", () => {
     expect(query).toEqual({ page: 1, pageSize: 10, status: undefined, q: undefined, categorySlug: undefined, tagSlug: undefined });
     expect(parseListQuery("junk", 10).page).toBe(1);
     expect(parseListQuery(null, 10).page).toBe(1);
+  });
+});
+describe("parsePostInput: site images and several categories", () => {
+  it("accepts a picture that lives on this site (WordPress or uploaded)", () => {
+    expect(parsePostInput({ title: "t", featuredImageUrl: "/wp-content/uploads/2024/05/photo-1_300x200.webp" }).featuredImageUrl).toBe("/wp-content/uploads/2024/05/photo-1_300x200.webp");
+    expect(parsePostInput({ title: "t", featuredImageUrl: "/wp-content/uploads/2021/a%20b@2x.png" }).featuredImageUrl).toBe("/wp-content/uploads/2021/a%20b@2x.png");
+  });
+  it("refuses other local paths and tricks", () => {
+    for (const bad of ["/etc/passwd", "/wp-content/uploads/../secret.png", "//evil.example/a.png", "/wp-content/uploads//a.png", "/wp-content/uploads/a b.png", '/wp-content/uploads/a".png', "/wp-content/uploads/a.png?x=1", "/wp-content/plugins/a.png", "/wp-content/uploads/"]) {
+      expect(codeOf(() => parsePostInput({ title: "t", featuredImageUrl: bad })), bad).toBe("VALIDATION_ERROR");
+    }
+  });
+  it("takes a list of categories and makes the first one the main category", () => {
+    const input = parsePostInput({ title: "t", categoryIds: [ID2, ID1, ID2.toUpperCase()] });
+    expect(input.categoryIds).toEqual([ID2, ID1]);
+    expect(input.categoryId).toBe(ID2);
+  });
+  it("an empty list means no category", () => {
+    const input = parsePostInput({ title: "t", categoryId: ID1, categoryIds: [] });
+    expect(input.categoryIds).toEqual([]);
+    expect(input.categoryId).toBeNull();
+  });
+  it("still understands the old single categoryId", () => {
+    const input = parsePostInput({ title: "t", categoryId: ID1.toUpperCase() });
+    expect(input.categoryId).toBe(ID1);
+    expect(input.categoryIds).toEqual([ID1]);
+  });
+  it("rejects a bad or too long category list", () => {
+    expect(codeOf(() => parsePostInput({ title: "t", categoryIds: "x" }))).toBe("VALIDATION_ERROR");
+    expect(codeOf(() => parsePostInput({ title: "t", categoryIds: ["nope"] }))).toBe("VALIDATION_ERROR");
+    const many = Array.from({ length: LIMITS.categories + 1 }, (_, i) => `65b0000000000000000000${String(i).padStart(2, "0")}`);
+    expect(codeOf(() => parsePostInput({ title: "t", categoryIds: many }))).toBe("VALIDATION_ERROR");
   });
 });

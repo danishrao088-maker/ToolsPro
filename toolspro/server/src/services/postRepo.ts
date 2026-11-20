@@ -15,6 +15,7 @@ interface RawPost {
   status: "draft" | "published";
   publishedAt: Date | null;
   category: Types.ObjectId | null;
+  categories?: Types.ObjectId[]; // WordPress se aaye posts mein saari categories (parents samet)
   tags: Types.ObjectId[];
   featuredImageUrl: string;
   featuredImageAlt: string;
@@ -38,6 +39,7 @@ async function toRecords(raw: RawPost[]): Promise<PostRecord[]> {
   const ids = new Set<string>();
   for (const post of raw) {
     if (post.category) ids.add(String(post.category));
+    for (const id of post.categories ?? []) ids.add(String(id));
     for (const tag of post.tags) ids.add(String(tag));
   }
   const terms = new Map<string, TermRef>();
@@ -45,6 +47,14 @@ async function toRecords(raw: RawPost[]): Promise<PostRecord[]> {
     const found = (await Term.find({ _id: { $in: [...ids].map(oid) } }).lean()) as unknown as RawTerm[];
     for (const term of found) terms.set(String(term._id), { id: String(term._id), name: term.name, slug: term.slug });
   }
+  const termList = (ids: Array<Types.ObjectId | null | undefined>): TermRef[] => {
+    const out: TermRef[] = [];
+    for (const id of ids) {
+      const term = id ? terms.get(String(id)) : undefined;
+      if (term && !out.some((t) => t.id === term.id)) out.push(term);
+    }
+    return out;
+  };
   return raw.map((post) => ({
     id: String(post._id),
     title: post.title,
@@ -56,6 +66,7 @@ async function toRecords(raw: RawPost[]): Promise<PostRecord[]> {
     createdAt: post.createdAt,
     updatedAt: post.updatedAt,
     category: post.category ? (terms.get(String(post.category)) ?? null) : null,
+    categories: termList([post.category, ...(post.categories ?? [])]),
     tags: post.tags.map((tag) => terms.get(String(tag))).filter((term): term is TermRef => term !== undefined),
     featuredImageUrl: post.featuredImageUrl,
     featuredImageAlt: post.featuredImageAlt,
@@ -79,6 +90,7 @@ const stored = (fields: PostFields) => ({
   status: fields.status,
   publishedAt: fields.publishedAt,
   category: fields.categoryId ? oid(fields.categoryId) : null,
+  categories: fields.categoryIds.map(oid),
   tags: fields.tagIds.map(oid),
   featuredImageUrl: fields.featuredImageUrl,
   featuredImageAlt: fields.featuredImageAlt,
@@ -100,11 +112,12 @@ export function createMongoPostRepo(): PostRepo {
       return (await Post.exists(filter)) !== null;
     },
 
-    async termsExist(categoryId, tagIds) {
+    async termsExist(categoryIds, tagIds) {
       ensureDb();
-      const category = categoryId ? (await Term.countDocuments({ _id: oid(categoryId), kind: "category" })) === 1 : true;
+      const categories =
+        categoryIds.length === 0 ? true : (await Term.countDocuments({ _id: { $in: categoryIds.map(oid) }, kind: "category" })) === categoryIds.length;
       const tags = tagIds.length === 0 ? true : (await Term.countDocuments({ _id: { $in: tagIds.map(oid) }, kind: "tag" })) === tagIds.length;
-      return { category, tags };
+      return { categories, tags };
     },
 
     async insert(fields) {
@@ -166,7 +179,7 @@ export function createMongoPostRepo(): PostRepo {
       if (query.categorySlug) {
         const id = await termId("category", query.categorySlug);
         if (!id) return { items: [], total: 0 };
-        filter.category = id;
+        filter.$and = [{ $or: [{ category: id }, { categories: id }] }];
       }
       if (query.tagSlug) {
         const id = await termId("tag", query.tagSlug);

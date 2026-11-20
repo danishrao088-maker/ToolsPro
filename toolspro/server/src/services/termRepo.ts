@@ -23,7 +23,14 @@ export function createMongoTermRepo(kind: "category" | "tag"): TermRepo {
     const match = publishedOnly ? [{ $match: { status: "published" } }] : [];
     const pipeline: PipelineStage[] =
       kind === "category"
-        ? [...match, { $match: { category: { $ne: null } } }, { $group: { _id: "$category", n: { $sum: 1 } } }]
+        ? [
+            ...match,
+            // Main category aur "categories" (WordPress ki saari categories) dono ginte hain, har post ek category mein sirf aik baar
+            { $project: { cats: { $setUnion: [["$category"], { $ifNull: ["$categories", []] }] } } },
+            { $unwind: "$cats" },
+            { $match: { cats: { $ne: null } } },
+            { $group: { _id: "$cats", n: { $sum: 1 } } },
+          ]
         : [...match, { $unwind: "$tags" }, { $group: { _id: "$tags", n: { $sum: 1 } } }];
     const rows = await Post.aggregate<{ _id: Types.ObjectId; n: number }>(pipeline);
     return new Map(rows.map((row) => [String(row._id), row.n]));
@@ -78,8 +85,10 @@ export function createMongoTermRepo(kind: "category" | "tag"): TermRepo {
       const removed = await Term.findOneAndDelete({ _id: oid(id), kind }).lean();
       if (!removed) return false;
       // Posts band nahi hote, bas unse ye category/tag hat jata hai
-      if (kind === "category") await Post.updateMany({ category: oid(id) }, { $set: { category: null } });
-      else await Post.updateMany({ tags: oid(id) }, { $pull: { tags: oid(id) } });
+      if (kind === "category") {
+        await Post.updateMany({ category: oid(id) }, { $set: { category: null } });
+        await Post.updateMany({ categories: oid(id) }, { $pull: { categories: oid(id) } });
+      } else await Post.updateMany({ tags: oid(id) }, { $pull: { tags: oid(id) } });
       return true;
     },
   };

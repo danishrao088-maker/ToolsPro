@@ -111,3 +111,21 @@ describe("sanitizeContent: removes dangerous content", () => {
     expect(sanitizeContent("")).toBe("");
   });
 });
+describe("sanitizeContent: video embeds", () => {
+  it("keeps a YouTube or Vimeo embed", () => {
+    const youtube = sanitizeContent('<p>x</p><iframe src="https://www.youtube.com/embed/abc123" width="560" height="315" allowfullscreen></iframe>');
+    expect(youtube).toContain('<iframe src="https://www.youtube.com/embed/abc123"');
+    expect(sanitizeContent('<iframe src="https://player.vimeo.com/video/123"></iframe>')).toContain("player.vimeo.com");
+  });
+  it("still removes iframes from any other site, without leaving an empty iframe", () => {
+    for (const src of ["https://evil.example/x", "https://www.youtube.com.evil.example/x", "//www.youtube.com/embed/a", "/relative"]) {
+      expect(sanitizeContent(`<iframe src="${src}"></iframe>`).toLowerCase(), src).not.toContain("<iframe");
+    }
+  });
+  it("removes event handlers and extra attributes from an embed", () => {
+    const html = sanitizeContent('<iframe src="https://www.youtube.com/embed/a" onload="alert(1)" style="x" srcdoc="<b>"></iframe>');
+    expect(html).not.toContain("onload");
+    expect(html).not.toContain("srcdoc");
+    expect(html).not.toContain("style");
+  });
+});

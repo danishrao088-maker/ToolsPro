@@ -18,6 +18,7 @@ export function adminSummary(post: PostRecord) {
     createdAt: post.createdAt.toISOString(),
     updatedAt: post.updatedAt.toISOString(),
     category: post.category ? adminTerm(post.category) : null,
+    categories: post.categories.map(adminTerm),
     tags: post.tags.map(adminTerm),
     featuredImage: image(post),
   };

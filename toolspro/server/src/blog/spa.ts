@@ -16,6 +16,7 @@ const SPA_ROUTES: RegExp[] = [
   /^\/contact\/?$/,
   /^\/privacy\/?$/,
   /^\/terms\/?$/,
+  /^\/admin(\/.*)?$/,
 ];
 
 export function isSpaRoute(urlPath: string): boolean {
@@ -35,6 +36,8 @@ export function installSpa(app: Express, distDir: string): void {
       res.status(404).type("text/plain").send("Not found");
       return;
     }
+    // Admin ke screens Google mein na aayein
+    if (/^\/admin(\/|$)/.test(req.path)) res.set("X-Robots-Tag", "noindex, nofollow");
     // Unknown URL par bhi index.html dete hain (React ka NotFound page dikhe), lekin status 404 ke saath
     res.status(isSpaRoute(req.path) ? 200 : 404).sendFile(path.join(distDir, "index.html"));
   });

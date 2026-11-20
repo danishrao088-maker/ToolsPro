@@ -19,7 +19,8 @@ export interface PostRecord {
   publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
-  category: TermRef | null;
+  category: TermRef | null; // main category
+  categories: TermRef[]; // saari categories (main wali sab se pehle)
   tags: TermRef[];
   featuredImageUrl: string;
   featuredImageAlt: string;
@@ -37,6 +38,7 @@ export interface PostFields {
   status: PostStatus;
   publishedAt: Date | null;
   categoryId: string | null;
+  categoryIds: string[];
   tagIds: string[];
   featuredImageUrl: string;
   featuredImageAlt: string;
@@ -59,7 +61,7 @@ export interface PostStats {
 
 export interface PostRepo {
   slugTaken(slug: string, exceptId?: string): Promise<boolean>;
-  termsExist(categoryId: string | null, tagIds: string[]): Promise<{ category: boolean; tags: boolean }>;
+  termsExist(categoryIds: string[], tagIds: string[]): Promise<{ categories: boolean; tags: boolean }>;
   insert(fields: PostFields): Promise<PostRecord | "duplicate">;
   update(id: string, fields: PostFields): Promise<PostRecord | "duplicate" | null>;
   setStatus(id: string, status: PostStatus, publishedAt: Date | null): Promise<PostRecord | null>;

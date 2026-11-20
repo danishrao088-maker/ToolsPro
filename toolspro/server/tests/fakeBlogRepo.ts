@@ -28,6 +28,7 @@ export function fakePostRepo(terms: FakeTerm[] = []) {
     createdAt,
     updatedAt: tick(),
     category: refOf(fields.categoryId),
+    categories: fields.categoryIds.map(refOf).filter((t): t is TermRef => t !== null),
     tags: fields.tagIds.map(refOf).filter((t): t is TermRef => t !== null),
     featuredImageUrl: fields.featuredImageUrl,
     featuredImageAlt: fields.featuredImageAlt,
@@ -41,9 +42,9 @@ export function fakePostRepo(terms: FakeTerm[] = []) {
     async slugTaken(slug, exceptId) {
       return posts.some((p) => p.slug === slug && p.id !== exceptId);
     },
-    async termsExist(categoryId, tagIds) {
+    async termsExist(categoryIds, tagIds) {
       return {
-        category: categoryId === null || terms.some((t) => t.id === categoryId && t.kind === "category"),
+        categories: categoryIds.every((id) => terms.some((t) => t.id === id && t.kind === "category")),
         tags: tagIds.every((id) => terms.some((t) => t.id === id && t.kind === "tag")),
       };
     },
@@ -90,7 +91,7 @@ export function fakePostRepo(terms: FakeTerm[] = []) {
     async list(query: PostListQuery) {
       let found = posts.filter((p) => (query.status ? p.status === query.status : true));
       if (query.q) found = found.filter((p) => p.title.toLowerCase().includes(query.q!.toLowerCase()));
-      if (query.categorySlug) found = found.filter((p) => p.category?.slug === query.categorySlug);
+      if (query.categorySlug) found = found.filter((p) => p.categories.some((c) => c.slug === query.categorySlug));
       if (query.tagSlug) found = found.filter((p) => p.tags.some((t) => t.slug === query.tagSlug));
       const key = query.sort === "published" ? "publishedAt" : "updatedAt";
       found = [...found].sort((a, b) => (b[key]?.getTime() ?? 0) - (a[key]?.getTime() ?? 0));

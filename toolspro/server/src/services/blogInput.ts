@@ -5,13 +5,14 @@ import { isObjectIdString, isValidSlug } from "./blogText";
 
 export const LIMITS = {
   title: 200,
-  excerpt: 300,
+  excerpt: 600,
   content: 500_000,
-  metaTitle: 120,
-  metaDescription: 200,
+  metaTitle: 160,
+  metaDescription: 320,
   imageUrl: 500,
   imageAlt: 200,
   tags: 20,
+  categories: 10,
   termName: 60,
   termDescription: 300,
   search: 100,
@@ -25,7 +26,8 @@ export interface PostInput {
   excerpt: string;
   contentHtml: string;
   status: PostStatus;
-  categoryId: string | null;
+  categoryId: string | null; // main category (categoryIds ki pehli)
+  categoryIds: string[]; // saari categories, main wali sab se pehle
   tagIds: string[];
   featuredImageUrl: string;
   featuredImageAlt: string;
@@ -68,11 +70,20 @@ function slugField(value: unknown): string | undefined {
   return slug;
 }
 
+// Is site ki apni image: /wp-content/uploads/2026/11/photo.webp (WordPress se aayi aur admin se upload hui dono)
+const SITE_IMAGE_PATH = /^\/wp-content\/uploads\/[^\s"'<>\\?#]+$/;
+
 function imageUrl(value: unknown): string {
   if (value === undefined || value === null || value === "") return "";
   if (typeof value !== "string") throw bad("The featured image address must be text.");
   const text = value.trim();
   if (text.length > LIMITS.imageUrl) throw bad(`The featured image address must be at most ${LIMITS.imageUrl} characters.`);
+  if (text.startsWith("/")) {
+    if (!SITE_IMAGE_PATH.test(text) || text.includes("..") || text.includes("//")) {
+      throw bad("The featured image must be an https:// address or a picture uploaded to this site.");
+    }
+    return text;
+  }
   let url: URL;
   try {
     url = new URL(text);
@@ -99,6 +110,16 @@ export function parsePostInput(body: unknown): PostInput {
     categoryId = data.categoryId;
   }
 
+  // Ek se zyada categories (WordPress ki tarah). Na bheji jayein to sirf categoryId wali ek category.
+  let categoryIds: string[] = categoryId === null ? [] : [categoryId.toLowerCase()];
+  if (data.categoryIds !== undefined && data.categoryIds !== null) {
+    if (!Array.isArray(data.categoryIds)) throw bad("The categories must be a list.");
+    if (!data.categoryIds.every(isObjectIdString)) throw bad("One of the selected categories is not valid.");
+    categoryIds = [...new Set(data.categoryIds.map((id) => id.toLowerCase()))];
+    if (categoryIds.length > LIMITS.categories) throw bad(`A post can have at most ${LIMITS.categories} categories.`);
+    categoryId = categoryIds[0] ?? null;
+  }
+
   let tagIds: string[] = [];
   if (data.tagIds !== undefined && data.tagIds !== null) {
     if (!Array.isArray(data.tagIds)) throw bad("The tags must be a list.");
@@ -114,6 +135,7 @@ export function parsePostInput(body: unknown): PostInput {
     contentHtml: content,
     status,
     categoryId: categoryId === null ? null : categoryId.toLowerCase(),
+    categoryIds,
     tagIds,
     featuredImageUrl: imageUrl(data.featuredImageUrl),
     featuredImageAlt: line(data.featuredImageAlt, "The image description", LIMITS.imageAlt),

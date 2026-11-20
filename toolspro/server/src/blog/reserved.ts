@@ -10,6 +10,7 @@ export const RESERVED_SLUGS = new Set([
   "author",
   "page",
   "blog",
+  "admin",
   "about",
   "contact",
   "privacy",
