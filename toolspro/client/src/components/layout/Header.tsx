@@ -69,11 +69,17 @@ export function Header() {
         </Link>
 
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
-          {mainLinks.map((item) => (
-            <NavLink key={item.path} to={item.path} end={item.path === "/"} className={desktopLinkClass}>
-              {item.label}
-            </NavLink>
-          ))}
+          {mainLinks.map((item) =>
+            item.serverPage ? (
+              <a key={item.path} href={item.path} className={desktopLinkClass({ isActive: false })}>
+                {item.label}
+              </a>
+            ) : (
+              <NavLink key={item.path} to={item.path} end={item.path === "/"} className={desktopLinkClass}>
+                {item.label}
+              </NavLink>
+            ),
+          )}
         </nav>
 
         <div className="flex items-center gap-1">
@@ -113,15 +119,21 @@ export function Header() {
         <ul className="flex flex-col gap-1">
           {[...mainLinks, ...legalLinks].map((item, index) => (
             <li key={item.path}>
-              <NavLink
-                ref={index === 0 ? firstLinkRef : undefined}
-                to={item.path}
-                end={item.path === "/"}
-                onClick={() => setOpenPath(null)}
-                className={mobileLinkClass}
-              >
-                {item.label}
-              </NavLink>
+              {item.serverPage ? (
+                <a href={item.path} className={mobileLinkClass({ isActive: false })}>
+                  {item.label}
+                </a>
+              ) : (
+                <NavLink
+                  ref={index === 0 ? firstLinkRef : undefined}
+                  to={item.path}
+                  end={item.path === "/"}
+                  onClick={() => setOpenPath(null)}
+                  className={mobileLinkClass}
+                >
+                  {item.label}
+                </NavLink>
+              )}
             </li>
           ))}
         </ul>

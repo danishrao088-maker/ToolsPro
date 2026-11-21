@@ -1,0 +1,148 @@
+import request from "supertest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("../src/services/adminAuthDefault", async () => {
+  const { createRequireAdmin } = await import("../src/middleware/adminGuard");
+  const adminAuthService = { login: vi.fn(), authenticate: vi.fn() };
+  return { adminAuthService, requireAdmin: createRequireAdmin(adminAuthService) };
+});
+
+import { app } from "../src/app";
+import { adminAuthService } from "../src/services/adminAuthDefault";
+
+const login = vi.mocked(adminAuthService.login);
+const authenticate = vi.mocked(adminAuthService.authenticate);
+
+describe("POST /api/admin/login", () => {
+  beforeEach(() => {
+    login.mockReset();
+    login.mockResolvedValue({ token: "tok.en", admin: { email: "owner@example.com" } });
+  });
+
+  it("signs in and sets an HttpOnly cookie", async () => {
+    const res = await request(app).post("/api/admin/login").send({ email: "owner@example.com", password: "secret pass 1" });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ success: true, data: { email: "owner@example.com" } });
+    const cookie = String(res.headers["set-cookie"]);
+    expect(cookie).toContain("toolspro_admin=tok.en");
+    expect(cookie).toContain("HttpOnly");
+    expect(cookie).toContain("SameSite=Strict");
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(login).toHaveBeenCalledWith("owner@example.com", "secret pass 1");
+  });
+
+  it("refuses a request from another origin before looking at the password", async () => {
+    const res = await request(app).post("/api/admin/login").set("Origin", "https://evil.example").send({ email: "owner@example.com", password: "x" });
+    expect(res.status).toBe(403);
+    expect(res.body.error.code).toBe("FORBIDDEN_ORIGIN");
+    expect(login).not.toHaveBeenCalled();
+  });
+});
+
+describe("GET /api/admin/me", () => {
+  beforeEach(() => {
+    authenticate.mockReset();
+  });
+
+  it("answers 401 without a session", async () => {
+    authenticate.mockResolvedValue(null);
+    const res = await request(app).get("/api/admin/me");
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe("UNAUTHORIZED");
+  });
+
+  it("returns the admin with a valid session cookie", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    const res = await request(app).get("/api/admin/me").set("Cookie", "toolspro_admin=tok.en");
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ success: true, data: { email: "owner@example.com" } });
+    expect(authenticate).toHaveBeenCalledWith("tok.en");
+  });
+});
+
+describe("POST /api/admin/logout", () => {
+  it("clears the cookie", async () => {
+    const res = await request(app).post("/api/admin/logout");
+    expect(res.status).toBe(200);
+    expect(String(res.headers["set-cookie"])).toContain("Max-Age=0");
+  });
+});
+describe("POST /api/admin/uploads", () => {
+  beforeEach(() => {
+    authenticate.mockReset();
+  });
+
+  it("needs a signed-in admin", async () => {
+    authenticate.mockResolvedValue(null);
+    const res = await request(app).post("/api/admin/uploads").set("Content-Type", "image/png").send(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0]));
+    expect(res.status).toBe(401);
+  });
+
+  it("refuses an upload that comes from another website", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    const res = await request(app).post("/api/admin/uploads").set("Origin", "https://evil.example").set("Content-Type", "image/png").send(Buffer.from([1, 2, 3]));
+    expect(res.status).toBe(403);
+  });
+
+  it("tells a signed-in admin when pictures cannot be saved (no folder configured in tests)", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    const res = await request(app)
+      .post("/api/admin/uploads")
+      .set("Cookie", "toolspro_admin=tok.en")
+      .set("Content-Type", "image/png")
+      .send(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0]));
+    expect(res.status).toBe(503);
+    expect(res.body.error.code).toBe("UPLOADS_NOT_CONFIGURED");
+  });
+});
+
+
+describe("/api/admin/messages", () => {
+  const cookie = "toolspro_admin=tok.en";
+  const id = "65c000000000000000000001";
+
+  beforeEach(() => {
+    authenticate.mockReset();
+  });
+
+  it("needs a signed-in admin on every route", async () => {
+    authenticate.mockResolvedValue(null);
+    const checks = [
+      request(app).get("/api/admin/messages"),
+      request(app).get("/api/admin/messages/unread-count"),
+      request(app).post("/api/admin/messages/read-all"),
+      request(app).patch(`/api/admin/messages/${id}`).send({ read: true }),
+      request(app).delete(`/api/admin/messages/${id}`),
+    ];
+    for (const res of await Promise.all(checks)) {
+      expect(res.status).toBe(401);
+      expect(res.body.error.code).toBe("UNAUTHORIZED");
+    }
+  });
+
+  it("refuses changes that come from another website", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    const patch = await request(app).patch(`/api/admin/messages/${id}`).set("Origin", "https://evil.example").set("Cookie", cookie).send({ read: true });
+    const del = await request(app).delete(`/api/admin/messages/${id}`).set("Origin", "https://evil.example").set("Cookie", cookie);
+    const all = await request(app).post("/api/admin/messages/read-all").set("Origin", "https://evil.example").set("Cookie", cookie);
+    expect([patch.status, del.status, all.status]).toEqual([403, 403, 403]);
+  });
+
+  it("reaches the messages (and says so when the database is down, as in these tests)", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    for (const path of ["/api/admin/messages", "/api/admin/messages/unread-count"]) {
+      const res = await request(app).get(path).set("Cookie", cookie);
+      expect(res.status).toBe(503);
+      expect(res.body.error.code).toBe("DB_UNAVAILABLE");
+    }
+  });
+
+  it("answers 404 for a malformed id and 400 for a bad body before touching the database", async () => {
+    authenticate.mockResolvedValue({ id: "1", email: "owner@example.com" });
+    const bad = await request(app).delete("/api/admin/messages/not-an-id").set("Cookie", cookie);
+    expect(bad.status).toBe(404);
+    const body = await request(app).patch(`/api/admin/messages/${id}`).set("Cookie", cookie).send({ read: "yes" });
+    expect(body.status).toBe(400);
+    expect(body.body.error.code).toBe("VALIDATION_ERROR");
+  });
+});

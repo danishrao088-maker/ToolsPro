@@ -1,5 +1,6 @@
 import { Gift, ShieldCheck, UserX, Zap } from "lucide-react";
 import { Container } from "../common/Container";
+import { SITE_NAME } from "../../data/site";
 
 const items = [
   { title: "Free to Use", description: "No hidden tool charges for approved tools.", icon: Gift },
@@ -10,7 +11,7 @@ const items = [
 
 export function TrustStrip() {
   return (
-    <section aria-label="Why ToolsPro" className="border-b border-line bg-surface">
+    <section aria-label={`Why ${SITE_NAME}`} className="border-b border-line bg-surface">
       <Container className="grid gap-6 py-8 sm:grid-cols-2 lg:grid-cols-4">
         {items.map(({ title, description, icon: ItemIcon }) => (
           <div key={title} className="flex items-start gap-3">

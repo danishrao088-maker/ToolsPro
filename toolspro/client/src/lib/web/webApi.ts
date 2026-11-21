@@ -1,6 +1,6 @@
 
 
-export type WebToolName = "status" | "redirects" | "is-it-down" | "ping" | "meta" | "open-graph" | "snoop" | "seo-score" | "domain-age" | "mobile-friendly" | "page-speed";
+export type WebToolName = "status" | "redirects" | "is-it-down" | "ping" | "meta" | "open-graph" | "snoop" | "seo-score" | "domain-age" | "mobile-friendly" | "page-speed"| "geo-ip";
 
 export type Level = "good" | "warning" | "missing" | "info";
 export interface Failure {
@@ -176,6 +176,35 @@ export type DomainAgeResult =
       note: string;
     }
   | { found: false; domain: string; reason: "NOT_FOUND" | "UNSUPPORTED_TLD"; message: string };
+  export interface GeoFields {
+  continent: string | null;
+  continentCode: string | null;
+  country: string | null;
+  countryCode: string | null;
+  region: string | null;
+  city: string | null;
+  latitude: number | null;
+  longitude: number | null;
+}
+
+export type GeoIpResult =
+  | ({
+      found: true;
+      query: string;
+      ip: string;
+      ipVersion: 4 | 6;
+      resolvedFrom: string | null;
+      databaseDate: string | null;
+      note: string;
+    } & GeoFields)
+  | {
+      found: false;
+      reason: "PRIVATE_ADDRESS" | "NOT_IN_DATABASE" | "NOT_FOUND";
+      query: string;
+      ip: string | null;
+      message: string;
+      note: string;
+    };
 export class WebToolError extends Error {
   code: string;
 

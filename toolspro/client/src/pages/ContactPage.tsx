@@ -29,7 +29,7 @@ function focusFirstInvalid(errors: ContactErrors): void {
 }
 
 export default function ContactPage() {
-  usePageMeta("Contact", "Send a question, bug report or suggestion to ToolsPro.");
+  usePageMeta("Contact", "Send a question, bug report or suggestion to Thesource Full.");
 
   const [values, setValues] = useState<ContactFields>(emptyValues);
   const [errors, setErrors] = useState<ContactErrors>({});

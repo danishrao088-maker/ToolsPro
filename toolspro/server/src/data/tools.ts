@@ -81,7 +81,7 @@ export const tools: Tool[] = [
     privacyMode: "browser", status: "active",
   },
   {
-    id: "fake-name-generator", name: "Fake Name Generator", slug: "fake-name-generator",
+    id: "fake-name-generator", name: "Name Generator", slug: "fake-name-generator",
     category: "text-tools", auditGroup: "A",
     description: "Generate random fake names for testing and samples.",
     icon: "Shuffle", tags: ["text", "random"], keywords: ["random name", "dummy data", "test data"],
@@ -141,7 +141,7 @@ export const tools: Tool[] = [
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Shorten long links into short, shareable URLs.",
     icon: "Link", tags: ["url", "link"], keywords: ["short link", "shorten url", "redirect"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "redirect-checker", name: "Redirect Checker", slug: "redirect-checker",
@@ -211,21 +211,21 @@ export const tools: Tool[] = [
     category: "pdf-and-document-tools", auditGroup: "D",
     description: "Convert Word documents to PDF.",
     icon: "FileText", tags: ["pdf", "word"], keywords: ["docx to pdf", "doc to pdf"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "excel-to-pdf", name: "Excel to PDF", slug: "excel-to-pdf",
     category: "pdf-and-document-tools", auditGroup: "D",
     description: "Convert Excel spreadsheets to PDF.",
     icon: "Sheet", tags: ["pdf", "excel"], keywords: ["xlsx to pdf", "xls to pdf"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "powerpoint-to-pdf", name: "PowerPoint to PDF", slug: "powerpoint-to-pdf",
     category: "pdf-and-document-tools", auditGroup: "D",
     description: "Convert PowerPoint presentations to PDF.",
     icon: "Presentation", tags: ["pdf", "powerpoint"], keywords: ["pptx to pdf", "ppt to pdf", "slides"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "split-pdf", name: "Split PDF", slug: "split-pdf",
@@ -367,7 +367,7 @@ export const tools: Tool[] = [
     category: "web-and-seo-tools", auditGroup: "C",
     description: "Look up the approximate location of an IP address.",
     icon: "MapPin", tags: ["ip", "network"], keywords: ["ip location", "geolocation", "ip lookup"],
-    privacyMode: "server", status: "planned",
+    privacyMode: "server", status: "active",
   },
   {
     id: "is-it-down", name: "Is It Down", slug: "is-it-down",

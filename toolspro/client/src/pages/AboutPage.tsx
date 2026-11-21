@@ -3,17 +3,17 @@ import { BulletList, ContentPage, ContentSection, contentLinkClass } from "../co
 import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function AboutPage() {
-  usePageMeta("About ToolsPro", "ToolsPro offers simple free online tools that work without an account.");
+  usePageMeta("About Thesource Full", "Thesource Full offers simple free online tools that work without an account.");
 
   return (
     <ContentPage
-      title="About ToolsPro"
-      intro="ToolsPro is a collection of simple, free online tools for everyday tasks. There is no registration and there are no hidden charges."
+      title="About Thesource Full"
+      intro="Thesource Full is a collection of simple, free online tools for everyday tasks. There is no registration and there are no hidden charges."
     >
       <ContentSection id="mission" heading="Mission">
         <p>
           Many everyday jobs, such as converting text, formatting data or working out a date, should not need an account,
-          an installation or a payment. ToolsPro aims to make these jobs quick and clear, so you can get a result and
+          an installation or a payment. Thesource Full aims to make these jobs quick and clear, so you can get a result and
           get on with your day.
         </p>
       </ContentSection>
@@ -34,7 +34,7 @@ export default function AboutPage() {
       </ContentSection>
 
       <ContentSection id="accessible-tools" heading="Accessible tools">
-        <p>We design ToolsPro to be comfortable to use for as many people as possible. That includes:</p>
+        <p>We design Thesource Full to be comfortable to use for as many people as possible. That includes:</p>
         <BulletList
           items={[
             "Pages that work on phones, tablets and computers.",

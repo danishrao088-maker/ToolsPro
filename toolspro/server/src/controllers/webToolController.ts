@@ -2,7 +2,7 @@ import { AppError } from "../utils/AppError";
 import { asyncHandler } from "../utils/asyncHandler";
 import { domainAgeService } from "../services/domainAgeService";
 import { webToolService } from "../services/webToolService";
-
+import { geoIpService } from "../services/geoIpService";
 // Sab web tools ki body ek jaisi hai: { "url": "example.com" }
 function readUrl(body: unknown): string {
   const url = (body as { url?: unknown } | null | undefined)?.url;
@@ -30,3 +30,12 @@ export const seoScore = tool((url) => webToolService.seoScore(url));
 export const domainAge = tool((url) => domainAgeService.check(url));
 export const mobileFriendly = tool((url) => webToolService.mobileFriendly(url));
 export const pageSpeed = tool((url) => webToolService.pageSpeed(url));
+// Geo IP: khali jagah par us insaan ka apna IP (req.ip) dekhte hain. Nginx ke peeche `trust proxy` lagana zaroori hai.
+export function createGeoIpHandler(service: { lookup(input: string, clientIp: string): Promise<unknown> }) {
+  return asyncHandler(async (req, res) => {
+    const data = await service.lookup(readUrl(req.body), req.ip ?? "");
+    res.json({ success: true, data });
+  });
+}
+
+export const geoIp = createGeoIpHandler(geoIpService);

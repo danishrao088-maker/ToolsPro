@@ -800,5 +800,75 @@ export const toolImplementations: Partial<Record<string, ToolImplementation>> = 
       "Your text stays in your browser.",
     ],
   },
+    "geo-ip-locator": {
+    Workspace: lazy(() => import("./GeoIpLocatorTool")),
+    howTo: [
+      "Type an IP address (like 8.8.8.8) or a domain name (like example.com), or select Use my IP address.",
+      "Select Find location.",
+      "Read the country, region and city. A domain name is first turned into the IP address it points to.",
+      "Remember that this is an estimate. Use the map link only as a rough guide.",
+    ],
+    limitations: [
+      "An IP address gives only an approximate place, often the area of the internet provider, not the exact home or office.",
+      "VPNs, proxies, company networks and mobile networks can show a different place.",
+      "The database is updated about once a month, so some results can be out of date.",
+      "Private or local addresses (such as 192.168.x.x) have no public location.",
+    ],
+  },
+    "word-to-pdf": {
+    Workspace: lazy(() => import("./OfficeToPdfTools").then((m) => ({ default: m.WordToPdfTool }))),
+    howTo: [
+      "Select a Word file (.docx or .doc), or drop it on the box.",
+      "Select Convert to PDF and wait. A large file can take up to a minute.",
+      "Select Download to save the PDF.",
+    ],
+    limitations: [
+      "Your file is uploaded to our server for conversion. The temporary copy is deleted when the conversion ends.",
+      "Layout, fonts and page breaks can look a little different from Word.",
+      "Files with macros and password-protected files are not accepted.",
+      "The maximum file size is 15 MB, and the converter can be busy at peak times. If so, try again in a minute.",
+    ],
+  },
+  "excel-to-pdf": {
+    Workspace: lazy(() => import("./OfficeToPdfTools").then((m) => ({ default: m.ExcelToPdfTool }))),
+    howTo: [
+      "Select an Excel file (.xlsx or .xls), or drop it on the box.",
+      "Select Convert to PDF and wait. A large file can take up to a minute.",
+      "Select Download to save the PDF.",
+    ],
+    limitations: [
+      "Your file is uploaded to our server for conversion. The temporary copy is deleted when the conversion ends.",
+      "Each sheet uses the page settings saved in the file. A wide sheet can split across several pages.",
+      "Files with macros and password-protected files are not accepted.",
+      "The maximum file size is 15 MB, and the converter can be busy at peak times. If so, try again in a minute.",
+    ],
+  },
+  "powerpoint-to-pdf": {
+    Workspace: lazy(() => import("./OfficeToPdfTools").then((m) => ({ default: m.PowerpointToPdfTool }))),
+    howTo: [
+      "Select a PowerPoint file (.pptx or .ppt), or drop it on the box.",
+      "Select Convert to PDF and wait. A large file can take up to a minute.",
+      "Select Download to save the PDF.",
+    ],
+    limitations: [
+      "Your file is uploaded to our server for conversion. The temporary copy is deleted when the conversion ends.",
+      "Each slide becomes one page. Animations, transitions and videos are not included.",
+      "Files with macros and password-protected files are not accepted.",
+      "The maximum file size is 15 MB, and the converter can be busy at peak times. If so, try again in a minute.",
+    ],
+  },
+  "url-shortener": {
+  Workspace: lazy(() => import("./UrlShortenerTool")),
+  howTo: [
+    "Paste the long web address into the box.",
+    "Select Shorten link.",
+    "Copy the short link and share it.",
+  ],
+  limitations: [
+    "The address is stored on our server so the short link can work.",
+    "Short links expire after one year.",
+    "Links to harmful or illegal pages can be removed.",
+  ],
+},
   
 };

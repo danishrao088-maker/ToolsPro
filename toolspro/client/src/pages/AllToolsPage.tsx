@@ -25,7 +25,7 @@ function parseSort(value: string | null, hasQuery: boolean): SortKey {
 }
 
 export default function AllToolsPage() {
-  usePageMeta("All Tools", "Browse all ToolsPro tools. Search by name or keyword, or filter by category.");
+  usePageMeta("All Tools", "Browse all Thesource Full tools. Search by name or keyword, or filter by category.");
 
   const [params, setParams] = useSearchParams();
   const q = params.get("q") ?? "";
@@ -150,7 +150,7 @@ export default function AllToolsPage() {
         {allTools && allTools.length === 0 ? (
           <EmptyState
             title="No tools available yet"
-            description="Tools are still being added to ToolsPro. Please check back soon."
+            description="Tools are still being added to Thesource Full. Please check back soon."
           />
         ) : null}
         {allTools && allTools.length > 0 && results.length === 0 ? (

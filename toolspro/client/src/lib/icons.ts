@@ -40,7 +40,9 @@ import {
   Smartphone,
   Gauge,
   SpellCheck,
-
+MapPin,
+Sheet,
+Presentation,
   type LucideIcon,
 } from "lucide-react";
 
@@ -87,6 +89,9 @@ export const iconMap: Record<string, LucideIcon> = {
   Smartphone,
   Gauge,
   SpellCheck,
+  MapPin,
+  Sheet,
+Presentation,
 };
 
 export const fallbackIcon: LucideIcon = Wrench;

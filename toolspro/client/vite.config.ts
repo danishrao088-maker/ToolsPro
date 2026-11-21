@@ -7,6 +7,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": "http://localhost:5000",
+      "/wp-content": "http://localhost:5000",
+      "^/s/.*": { target: "http://localhost:5000", changeOrigin: true },
     },
   },
 });

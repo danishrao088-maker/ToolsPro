@@ -9,22 +9,22 @@ import { usePageMeta } from "../hooks/usePageMeta";
 export default function PrivacyPage() {
   usePageMeta(
     "Privacy Policy",
-    "How ToolsPro handles your information: what stays in your browser, what the contact form stores, and for how long."
+    "How Thesource Full handles your information: what stays in your browser, what the contact form stores, and for how long."
   );
 
   return (
     <ContentPage
       title="Privacy Policy"
       updated={LEGAL_LAST_UPDATED}
-      intro="This page explains what happens to your information when you use ToolsPro. You do not need an account to use the site."
+      intro="This page explains what happens to your information when you use Thesource Full. You do not need an account to use the site."
     >
       <ContentSection id="summary" heading="In short">
         <BulletList
           items={[
-            "ToolsPro has no accounts, logins or registration.",
+            "Thesource Full has no accounts, logins or registration.",
             "Tools that run in your browser process your input on your own device. It is not sent to our server.",
             `The only information we store on purpose is what you send through the contact form. It is deleted automatically after ${CONTACT_RETENTION_DAYS} days.`,
-            "ToolsPro does not currently use analytics, advertising or third-party tracking scripts.",
+            "Thesource Full does not currently use analytics, advertising or third-party tracking scripts.",
           ]}
         />
       </ContentSection>
@@ -62,15 +62,15 @@ export default function PrivacyPage() {
 
       <ContentSection id="browser-storage" heading="Information stored in your browser">
         <p>
-          If you switch between the light and dark theme, ToolsPro remembers your choice using your browser's local
-          storage. This stays on your device and is not sent to us. ToolsPro does not currently set cookies of its own.
+          If you switch between the light and dark theme, Thesource Full remembers your choice using your browser's local
+          storage. This stays on your device and is not sent to us. Thesource Full does not currently set cookies of its own.
           You can remove the saved theme at any time by clearing your site data in your browser settings.
         </p>
       </ContentSection>
 
       <ContentSection id="server-logs" heading="Server logs">
         <p>
-          Like most websites, the server and hosting service that deliver ToolsPro may keep standard technical logs of
+          Like most websites, the server and hosting service that deliver Thesource Full may keep standard technical logs of
           requests, such as the IP address, date and time, the page requested and the type of browser. These are used to
           keep the site running and secure. The exact logs and how long they are kept depend on our hosting setup.
         </p>
@@ -78,8 +78,8 @@ export default function PrivacyPage() {
 
       <ContentSection id="third-parties" heading="Analytics and third parties">
         <p>
-          ToolsPro does not currently use analytics, advertising networks or third-party tracking scripts. The site's
-          fonts and code are served from ToolsPro itself. If this changes, we will update this policy.
+          Thesource Full does not currently use analytics, advertising networks or third-party tracking scripts. The site's
+          fonts and code are served from Thesource Full itself. If this changes, we will update this policy.
         </p>
       </ContentSection>
 
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
 
       <ContentSection id="changes" heading="Changes to this policy">
         <p>
-          We may update this policy as ToolsPro changes. The date at the top shows when it was last updated. Please
+          We may update this policy as Thesource Full changes. The date at the top shows when it was last updated. Please
           also see our{" "}
           <Link to="/terms" className={contentLinkClass}>
             Terms of Service
