@@ -10,7 +10,19 @@ import { installBlog } from "./blog";
 
 export const app = express();
 if (env.NODE_ENV === "production") app.set("trust proxy", 1);
-app.use(helmet());
+// React app ki CSP: helmet ki default, bas do cheezen zyada. Image to Text (OCR) tool WebAssembly chalata hai ('wasm-unsafe-eval':
+// sirf wasm, normal eval nahi) aur uska worker hamari apni site se aata hai (worker-src 'self'). Inke baghair OCR browser mein block ho jata hai.
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "script-src": ["'self'", "'wasm-unsafe-eval'"],
+        "worker-src": ["'self'"],
+      },
+    },
+  }),
+);
 app.use(cors({ origin: env.CLIENT_ORIGINS, credentials: true }));
 
 // Aam requests ki body 10kb tak; sirf admin ke posts (jin me lamba article hota hai) ke liye 1mb tak

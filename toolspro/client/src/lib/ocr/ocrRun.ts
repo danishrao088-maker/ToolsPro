@@ -38,6 +38,7 @@ export function startOcr(file: File, languageCode: string, onProgress: (label: s
     onProgress("Getting ready", null);
     const created = await createWorker(languageCode, 1, {
       workerPath: "/tesseract/worker.min.js",
+      workerBlobURL: false, // worker seedha hamari file se chale (blob: URL se nahi), taake CSP ko "blob:" ki ijazat na deni paray
       corePath: "/tesseract/core",
       langPath: "/tessdata",
       logger: (message) => {
